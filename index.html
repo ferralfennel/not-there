@@ -127,6 +127,12 @@
                             this.start();
                         });
                     });
+                    this.shell.animate({
+                        opacity: [0, 1]
+                    }, {
+                        duration: 500,
+                        easing: 'ease-out'
+                    });
                 }
 
                 chooseRole (role) {
@@ -141,7 +147,14 @@
                 }
 
                 start () {
-                    this._onStart();
+                    this.shell.animate({
+                        opacity: [1, 0]
+                    }, {
+                        duration: 500,
+                        easing: 'ease-out'
+                    }).onfinish = () => {
+                        this._onStart();
+                    };
                 }
             }
 
@@ -153,6 +166,12 @@
 
                 show () {
                     super.show();
+                    this.shell.animate({
+                        opacity: [0, 1]
+                    }, {
+                        duration: 500,
+                        easing: 'ease-out'
+                    });
                     this.canvas = this.shell.querySelector('#canvas');
                     window.addEventListener('resize', this.resize.bind(this));
                     this.resize();
