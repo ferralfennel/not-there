@@ -11,6 +11,10 @@
                 padding: 0px;
                 overflow: hidden;
             }
+            #shell {
+                width: 100vw;
+                height: 100vh;
+            }
             canvas {
                 transform: scale(0.5, 0.5);
                 transform-origin: 0 0;
@@ -19,11 +23,20 @@
         <link rel="import" href="./level.html">
         <link rel="import" href="./keyboard.html">
         <link rel="import" href="./log.html">
+        <link rel="import" href="./socket-manager.html">
+        <link rel="import" href="./mouse-manager.html">
     </head>
     <body>
-        <canvas id="canvas"></canvas>
+        <template id="main-menu">
+            <button type="button" id="drive-button">Drive</button>
+            <button type="button" id="assist-button">Assist</button>
+            <button type="button" id="start-button">Start</button>
+        </template>
+        <template id="game">
+            <canvas id="canvas"></canvas>
+        </template>
+        <div id="shell"></div>
         <script>
-
 
             window.EasingFunctions = {
                 // no easing, no acceleration
@@ -56,33 +69,145 @@
 
             let canvas = document.getElementById('canvas'),
                 lastTs = 0;
-            function resize() {
-                canvas.width = window.innerWidth * 2;
-                canvas.height = window.innerHeight * 2;
-            }
-            function init () {
-                let ctx = canvas.getContext('2d'),
-                    level = new Level(ctx, {});
 
-                Keyboard.grab(window);
-                Logger.setContext(ctx);
-
-                level.start();
-
-                function update(ts) {
-                    let dt = ts - lastTs,
-                        collisions;
-                    lastTs = ts;
-                    level.update(dt);
-                    level.render();
-                    Logger.render();
-                    requestAnimationFrame(update);
+            class View {
+                constructor (templateId) {
+                    this.shell = document.getElementById('shell');
+                    this.template = document.getElementById(templateId);
+                    this.root = this.template.content.cloneNode(true);
                 }
-                requestAnimationFrame(update);
+                show () {
+                    while (this.shell.firstChild) {
+                        this.shell.removeChild(this.shell.firstChild);
+                    }
+                    this.shell.appendChild(this.root);
+                }
             }
-            window.addEventListener('resize', resize);
-            resize();
-            init();
+
+            class MainMenu extends View {
+                constructor () {
+                    super('main-menu');
+                }
+
+                show () {
+                    super.show();
+                    this.ready = {};
+                    this.buttons = {
+                        driver: this.shell.querySelector('#drive-button'),
+                        assist: this.shell.querySelector('#assist-button'),
+                        start: this.shell.querySelector('#start-button')
+                    };
+                    this.buttons.driver.addEventListener('click', () => {
+                        this.chooseRole('driver');
+                    });
+                    this.buttons.assist.addEventListener('click', () => {
+                        this.chooseRole('assist');
+                    });
+                    this.buttons.start.addEventListener('click', () => {
+                        Socket.ready();
+                    });
+                    this.buttons.driver.setAttribute('disabled', true);
+                    this.buttons.assist.setAttribute('disabled', true);
+                    this.buttons.start.setAttribute('disabled', true);
+                    Socket.connect().then((data) => {
+                        ['driver', 'assist'].forEach(role => {
+                            if (data.rolesTaken.indexOf(role) === -1) {
+                                this.buttons[role].removeAttribute('disabled');
+                            }
+                        });
+                        Socket.socket.on('role-choosen', (role) => {
+                            this.buttons[role].setAttribute('disabled', true);
+                        });
+
+                        Socket.socket.on('all-ready', () => {
+                            this.buttons.start.removeAttribute('disabled');
+                        });
+
+                        Socket.socket.on('start', (role) => {
+                            this.start();
+                        });
+                    });
+                    this.shell.animate({
+                        opacity: [0, 1]
+                    }, {
+                        duration: 500,
+                        easing: 'ease-out'
+                    });
+                }
+
+                chooseRole (role) {
+                    Socket.chooseRole(role).then(() => {
+                        this.buttons.driver.setAttribute('disabled', true);
+                        this.buttons.assist.setAttribute('disabled', true);
+                    });
+                }
+
+                onStart (cb) {
+                    this._onStart = cb;
+                }
+
+                start () {
+                    this.shell.animate({
+                        opacity: [1, 0]
+                    }, {
+                        duration: 500,
+                        easing: 'ease-out'
+                    }).onfinish = () => {
+                        this._onStart();
+                    };
+                }
+            }
+
+            class Game extends View {
+                constructor () {
+                    super('game');
+                    this.lastTs = 0;
+                }
+
+                show () {
+                    super.show();
+                    this.shell.animate({
+                        opacity: [0, 1]
+                    }, {
+                        duration: 500,
+                        easing: 'ease-out'
+                    });
+                    this.canvas = this.shell.querySelector('#canvas');
+                    window.addEventListener('resize', this.resize.bind(this));
+                    this.resize();
+                    Mouse.grab(window);
+                    this.ctx = this.canvas.getContext('2d');
+                    this.level = new Level(this.ctx, {});
+
+                    Keyboard.grab(window);
+                    Logger.setContext(this.ctx);
+
+                    this.level.start();
+
+                    requestAnimationFrame(this.update.bind(this));
+                }
+
+                update (ts) {
+                    let dt = ts - this.lastTs;
+                    this.lastTs = ts;
+                    this.level.update(dt);
+                    this.level.render();
+                    Logger.render();
+                    requestAnimationFrame(this.update.bind(this));
+                }
+
+                resize () {
+                    this.canvas.width = window.innerWidth * 2;
+                    this.canvas.height = window.innerHeight * 2;
+                }
+            }
+            
+            let mainMenu = new MainMenu();
+            mainMenu.onStart(() => {
+                let game = new Game();
+                game.show();
+            });
+            mainMenu.show();
         </script>
     </body>
 </html>

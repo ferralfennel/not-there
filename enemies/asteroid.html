@@ -1,4 +1,5 @@
 <link rel="import" href="../entity.html">
+<link rel="import" href="../socket-manager.html">
 <script>
 const ASSETS_COUNT = 4
     class Asteroid extends Entity {
@@ -30,6 +31,8 @@ const ASSETS_COUNT = 4
         }
 
         render () {
+            if (!Socket.isDriver) { return; }
+
             super.render();
             this.ctx.drawImage(this.image, -this.size, -this.size, this.size * 2, this.size * 2)
             super.afterRender();

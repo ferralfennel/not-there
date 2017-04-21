@@ -1,0 +1,23 @@
+<link rel="import" href="./rendered-element.html">
+<script>
+    class Marker extends RenderedElement {
+        constructor (ctx, opts) {
+            super(ctx, opts);
+        }
+
+        move (x, y) {
+            this.x += x;
+            this.y += y;
+        }
+
+        render () {
+            super.render();
+            this.ctx.fillStyle = 'yellow';
+            this.ctx.beginPath();
+            this.ctx.arc(0, 0, 4, 0, 2 * Math.PI);
+            this.ctx.fill();
+            this.ctx.closePath();
+            super.afterRender();
+        }
+    }
+</script>

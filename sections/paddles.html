@@ -1,6 +1,7 @@
 <link rel="import" href="./section.html">
 <link rel="import" href="../enemies/wall.html">
 <link rel="import" href="../elements/paddle.html">
+<link rel="import" href="../socket-manager.html">
 <script>
     const PADDLE_WIDTH = 150
     const PADDLE_HEIGHT = 40
@@ -35,6 +36,8 @@
         }
 
         render() {
+            if (!Socket.isDriver) { return; }
+
             super.render();
         }
     }

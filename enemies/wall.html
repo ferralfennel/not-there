@@ -1,4 +1,5 @@
 <link rel="import" href="../entity.html">
+<link rel="import" href="../socket-manager.html">
 <script>
     const WALL_COLOR = '#e6565b';
 
@@ -17,6 +18,8 @@
         }
 
         render () {
+            if (!Socket.isDriver) { return; }
+
             super.render();
             this.ctx.beginPath();
             this.ctx.strokeStyle = WALL_COLOR;
