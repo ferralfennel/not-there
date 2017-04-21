@@ -4,15 +4,20 @@
             super(ctx, opts);
         }
 
-        moveTo (x, y) {
-            this.x = x;
-            this.y = y || this.y;
+        moveTo (x = 0, y = 0) {
+            let diff = {
+                x: x - (this.x || 0),
+                y: y - (this.y || 0)
+            }
 
-            this.body.x = this.x;
-            this.body.y = this.y;
+            this.x = x;
+            this.y = y;
+
+            this.body.x += diff.x;
+            this.body.y += diff.y;
         }
 
-        move (x, y) {
+        move (x = 0, y = 0) {
             this.moveTo(this.x + x, this.y + y);
         }
 

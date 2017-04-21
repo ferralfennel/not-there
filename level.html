@@ -2,14 +2,16 @@
 <link rel="import" href="./player.html">
 <link rel="import" href="./sound-manager.html">
 <link rel="import" href="./log.html">
-<link rel="import" href="./sections/section-1.html">
-<link rel="import" href="./sections/section-paddles.html">
+<link rel="import" href="./sections/asteroid-single.html">
+<link rel="import" href="./sections/asteroids-multi.html">
+<link rel="import" href="./sections/paddles.html">
 <script>
     const STARTING_ANIM_MS = 1000;
     const GENERATE_PADDING = 200
     const SECTIONS_INDEX = [
         { constr: SectionPaddles, likelyhood: 1 },
-        // { constr: Section1, likelyhood: 1 },
+        { constr: SectionAsteroidSingle, likelyhood: 1 },
+        { constr: SectionAsteroidsMulti, likelyhood: 1 },
     ]
 
     class Level {
