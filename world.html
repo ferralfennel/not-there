@@ -20,7 +20,35 @@
             let el1 = this.elements[elId1],
                 el2 = this.elements[elId2];
 
-            if (el1.type === 'circle' && el2.type === 'circle') {
+            if (el1.type === 'rect' && el2.type === 'rect') {   
+                return (
+                    Math.max(el1.x, el2.x) < Math.min(el1.x + el1.width, el2.x + el2.width) &&
+                    Math.max(el1.y, el2.y) < Math.min(el1.y + el1.height, el2.y + el2.height)
+                );
+            } else if (
+                el1.type === 'circle' && el2.type === 'rect' ||
+                el1.type === 'rect' && el2.type === 'circle'
+            ) {
+                let circle = el1.type === 'circle' ? el1 : el2
+                let rect = el1.type === 'rect' ? el1 : el2
+                let dist = {
+                    x: Math.abs(circle.x - rect.x - rect.width / 2),
+                    y: Math.abs(circle.y - rect.y - rect.height / 2)
+                }
+
+                if (dist.x > (rect.width / 2 + circle.r)) { return false; }
+                if (dist.y > (rect.height / 2 + circle.r)) { return false; }
+
+                if (dist.x <= (rect.width / 2)) { return true; } 
+                if (dist.y <= (rect.height / 2)) { return true; }
+
+                let cornerDistanceSq = (
+                    Math.pow(dist.x - rect.width / 2, 2) +
+                    Math.pow(dist.y - rect.height / 2, 2)
+                );
+
+                return cornerDistanceSq <= Math.pow(circle.r, 2);
+            } else if (el1.type === 'circle' && el2.type === 'circle') {
                 let d = {
                     x: Math.abs(el2.x - el1.x),
                     y: Math.abs(el2.y - el1.y)
