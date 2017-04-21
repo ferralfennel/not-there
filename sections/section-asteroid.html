@@ -1,11 +1,7 @@
 <link rel="import" href="./section.html">
 <link rel="import" href="../enemies/wall.html">
-<link rel="import" href="../elements/paddle.html">
 <script>
-    const PADDLE_WIDTH = 150
-    const PADDLE_HEIGHT = 40
-
-    class SectionPaddles extends Section {
+    class SectionAsteroid extends Section {
         constructor(scene, opts) {
             super(scene, opts, 500);
             this.gapSize = Math.random() * 200 + 150
@@ -17,10 +13,7 @@
 
             this.elements = [
                 // new Wall(scene, Math.random() * scene.width, -10, 30)
-                new Wall(scene, -wallOffset, 0, wallSize),
-                new Wall(scene, wallOffset, 0, wallSize),
-                new Paddle(scene, scene.width / 2 - this.gapSize - PADDLE_WIDTH, -PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT),
-                new Paddle(scene, scene.width / 2 + this.gapSize / 2, -PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT)
+                new Asteroid(scene, -wallOffset, 0, wallSize),
             ];
         }
 
@@ -32,10 +25,6 @@
             if (this.x > slack || this.x < -slack) {
                 this.dir *= -1
             }
-        }
-
-        render() {
-            super.render();
         }
     }
 </script>

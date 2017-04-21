@@ -13,8 +13,8 @@
             });
             this.velY = 0;
             this.velX = 0;
-            this.accel = 0.02;
-            this.friction = 0.1;
+            this.accel = 0.1;
+            this.friction = 0.5;
         }
 
         update (dt) {
@@ -47,14 +47,6 @@
             this.ctx.arc(0, 0, 10, 0, 2 * Math.PI);
             this.ctx.fill();
             this.ctx.closePath();
-            if (this.d) {
-                this.ctx.strokeStyle = 'green';
-                this.ctx.beginPath();
-                this.ctx.moveTo(0, 0);
-                this.ctx.lineTo(this.d.x, this.d.y);
-                this.ctx.closePath();
-                this.ctx.stroke();
-            }
             super.afterRender();
         }
 

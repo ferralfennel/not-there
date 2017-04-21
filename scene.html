@@ -1,6 +1,8 @@
 <link rel="import" href="./rendered-element.html">
 <link rel="import" href="./world.html">
 <script>
+    const BG_COLOR = '#47273f';
+
     class Scene extends RenderedElement {
         constructor (ctx, opts={}) {
             super(ctx, {
@@ -43,7 +45,7 @@
 
         render () {
             super.render();
-            this.ctx.fillStyle = '#213642';
+            this.ctx.fillStyle = BG_COLOR;
             this.ctx.fillRect(0, 0, this.width, this.height);
             this.elements.forEach(el => el.render());
             super.afterRender();
@@ -54,10 +56,15 @@
             Object.keys(this.world.elements).forEach(id => {
                 let el = this.world.elements[id];
                 this.ctx.fillStyle = 'rgba(0, 255, 0, .5)';
-                this.ctx.beginPath();
-                this.ctx.arc(el.x, el.y, el.r, 0, 2 * Math.PI);
-                this.ctx.fill();
-                this.ctx.closePath();
+
+                if (el.type === 'circle') {
+                  this.ctx.beginPath();
+                  this.ctx.arc(el.x, el.y, el.r, 0, 2 * Math.PI);
+                  this.ctx.fill();
+                  this.ctx.closePath();
+                } else if (el.type === 'rect') {
+                  this.ctx.fillRect(el.x, el.y, el.width, el.height)
+                }
             })
         }
     }

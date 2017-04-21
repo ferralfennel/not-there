@@ -1,0 +1,53 @@
+<link rel="import" href="../entity.html">
+<script>
+    const CV = 20
+    const BG = '#e7565b';
+    const BG_INNER = '#d2232d'
+    const PAD = 10
+
+    class Paddle extends Entity {
+        constructor(scene, x, y, width, height) {
+            super(scene.ctx, { x, y });
+            this.world = scene.world;
+            this.body = this.world.add(null, {
+                type: 'rect',
+                x: this.x,
+                y: this.y,
+                width, height,
+                data: this
+            });
+        }
+
+        render () {
+            super.render();
+
+            this.ctx.beginPath();
+
+            this.rectangoloid(0, BG)
+            this.rectangoloid(PAD, BG_INNER)
+
+            super.afterRender();
+        }
+
+        rectangoloid(p = 0, color) {
+            let w = this.body.width
+            let h = this.body.height
+            
+            this.ctx.save();
+
+            this.ctx.fillStyle = color;
+            this.ctx.strokeStyle = 'white';
+
+            this.ctx.beginPath()
+            this.ctx.moveTo(p * 1.5, h / 2);
+            this.ctx.lineTo(h / 2 + p, 0 + p);
+            this.ctx.lineTo(w - h / 2 - p, p);
+            this.ctx.lineTo(w - p * 1.5, h / 2);
+            this.ctx.lineTo(w - h / 2 - p, h - p);
+            this.ctx.lineTo(h / 2 + p, h - p);
+            this.ctx.closePath()
+            this.ctx.fill();
+            this.ctx.restore();
+        }
+    }
+</script>

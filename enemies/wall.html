@@ -1,5 +1,7 @@
 <link rel="import" href="../entity.html">
 <script>
+    const WALL_COLOR = '#e6565b';
+
     class Wall extends Entity {
         constructor(scene, x, y, width) {
             super(scene.ctx, { x, y });
@@ -10,14 +12,19 @@
                 x,
                 y,
                 width,
-                height: 2
+                height: 1
             });
         }
 
         render () {
             super.render();
-            this.ctx.fillStyle = 'red';
-            this.ctx.fillRect(0, 0, this.body.width, this.body.height);
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = WALL_COLOR;
+            this.ctx.lineWidth = 2;
+            this.ctx.setLineDash([ 6, 6 ]);
+            this.ctx.moveTo(0, 0);
+            this.ctx.lineTo(this.body.width, 0);
+            this.ctx.stroke();
             super.afterRender();
         }
     }
