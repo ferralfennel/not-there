@@ -1,4 +1,4 @@
-<link rel="import" href="./entity.html">
+<link rel="import" href="../entity.html">
 <script>
     class SpaceRock extends Entity {
         constructor(scene, x, y, size) {
@@ -8,7 +8,13 @@
             });
             this.size = size;
             this.world = scene.world;
-            this.body = this.world.add(null, this.x, this.y, this.size, this);
+            this.body = this.world.add(null, {
+                type: 'circle',
+                x: this.x,
+                y: this.y,
+                r: this.size,
+                data: this
+            });
         }
 
         render () {

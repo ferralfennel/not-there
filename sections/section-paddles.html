@@ -1,0 +1,31 @@
+<link rel="import" href="./section.html">
+<link rel="import" href="../enemies/wall.html">
+<script>
+    class SectionPaddles extends Section {
+        constructor(scene, opts) {
+            super(scene, opts, 500);
+            this.gapSize = Math.random() * 200 + 150
+            this.dir = Math.random() > .5 ? 1 : -1
+            this.speed = Math.random() * 2
+
+            let wallSize = scene.width - this.gapSize / 2
+            let wallOffset = scene.width / 2 + this.gapSize / 2
+
+            this.elements = [
+                // new Wall(scene, Math.random() * scene.width, -10, 30)
+                new Wall(scene, -wallOffset, 0, wallSize),
+                new Wall(scene, wallOffset, 0, wallSize)
+            ];
+        }
+
+        update(dt) {
+            this.move(this.speed * dt * this.dir, 0)
+
+            let slack = this.scene.width / 2 - this.gapSize / 2
+
+            if (this.x > slack || this.x < -slack) {
+                this.dir *= -1
+            }
+        }
+    }
+</script>

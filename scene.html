@@ -47,6 +47,18 @@
             this.ctx.fillRect(0, 0, this.width, this.height);
             this.elements.forEach(el => el.render());
             super.afterRender();
+            // this.renderBodies()
+        }
+
+        renderBodies() {
+            Object.keys(this.world.elements).forEach(id => {
+                let el = this.world.elements[id];
+                this.ctx.fillStyle = 'rgba(0, 255, 0, .5)';
+                this.ctx.beginPath();
+                this.ctx.arc(el.x, el.y, el.r, 0, 2 * Math.PI);
+                this.ctx.fill();
+                this.ctx.closePath();
+            })
         }
     }
 </script>

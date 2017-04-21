@@ -1,11 +1,16 @@
 <link rel="import" href="./scene.html">
 <link rel="import" href="./player.html">
-<link rel="import" href="./space-rock.html">
 <link rel="import" href="./sound-manager.html">
 <link rel="import" href="./log.html">
 <link rel="import" href="./sections/section-1.html">
+<link rel="import" href="./sections/section-paddles.html">
 <script>
     const STARTING_ANIM_MS = 1000;
+    const GENERATE_PADDING = 200
+    const SECTIONS_INDEX = [
+        { constr: SectionPaddles, likelyhood: 1 },
+        // { constr: Section1, likelyhood: 1 },
+    ]
 
     class Level {
         constructor (ctx, json) {
@@ -42,7 +47,7 @@
 
             if (!this.sections.length || totalSectionHeight < this.scene.height) {
                 let { height, y } = lastSection || {}
-                let newSection = new Section1(this.scene, { x: 0, y: (y || 0) + (-height || 0) });
+                let newSection = this.generateSection(y - GENERATE_PADDING, height);
                 this.scene.addElement(newSection);
                 this.sections.push(newSection);
             }
@@ -70,8 +75,35 @@
             this.scene.update(dt);
             collisions = this.scene.world.getCollisions('player');
             collisions.forEach(col => {
-                console.log(col);
+                console.log('HIT')
             });
+        }
+
+        generateSection(y, height) {
+            let Constr;
+            let ltotal = 0;
+            let lcur = 0;
+            let ltarget;
+
+            for (let section of SECTIONS_INDEX) {
+                ltotal += section.likelyhood;
+            }
+
+            ltarget = Math.random() * ltotal;
+
+            for (let section of SECTIONS_INDEX) {
+                if (lcur + section.likelyhood > ltarget) {
+                    Constr = section.constr;
+                    break;
+                }
+
+                lcur += section.likelyhood;
+            }
+
+            let section = new Constr(this.scene, { x: 0, y: 0 });
+            section.move(0, (y || 0) + (-height || 0));
+
+            return section
         }
 
         render () {

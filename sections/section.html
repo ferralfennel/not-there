@@ -9,6 +9,10 @@
         move (x, y) {
             this.x += x;
             this.y += y;
+            this.elements.forEach(el => {
+              el.body.x += x
+              el.body.y += y
+            })
         }
 
         update (dt) {

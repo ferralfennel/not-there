@@ -5,10 +5,10 @@
             this._inc = 0;
         }
 
-        add (id, x, y, r, data) {
+        add (id, props) {
             let body;
             id = id || 'global-' + this._inc++;
-            this.elements[id] = body = { x, y, r, data };
+            this.elements[id] = body = props;
             return body;
         }
 
@@ -18,14 +18,17 @@
 
         touches (elId1, elId2) {
             let el1 = this.elements[elId1],
-                el2 = this.elements[elId2],
-                d = {
+                el2 = this.elements[elId2];
+
+            if (el1.type === 'circle' && el2.type === 'circle') {
+                let d = {
                     x: Math.abs(el2.x - el1.x),
                     y: Math.abs(el2.y - el1.y)
                 },
                 dist = Math.sqrt(Math.pow(d.x, 2) + Math.pow(d.y, 2));
 
-            return dist < el1.r + el2.r;
+                return dist < el1.r + el2.r;
+            }
         }
 
         move (id, x, y) {

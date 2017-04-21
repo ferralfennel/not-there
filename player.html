@@ -5,7 +5,12 @@
             super(scene.ctx, opts);
             scene.addElement(this);
             this.world = scene.world;
-            this.body = this.world.add('player', this.x, this.y, 10);
+            this.body = this.world.add('player', {
+              type: 'circle',
+              x: this.x,
+              y: this.y,
+              r: 10
+            });
             this.velY = 0;
             this.velX = 0;
             this.accel = 0.02;

@@ -1,0 +1,24 @@
+<link rel="import" href="../entity.html">
+<script>
+    class Wall extends Entity {
+        constructor(scene, x, y, width) {
+            super(scene.ctx, { x, y });
+            this.width = width
+            this.world = scene.world;
+            this.body = this.world.add(null, {
+                type: 'rect',
+                x,
+                y,
+                width,
+                height: 2
+            });
+        }
+
+        render () {
+            super.render();
+            this.ctx.fillStyle = 'red';
+            this.ctx.fillRect(0, 0, this.body.width, this.body.height);
+            super.afterRender();
+        }
+    }
+</script>
