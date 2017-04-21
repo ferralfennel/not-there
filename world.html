@@ -1,0 +1,43 @@
+<script>
+    class World {
+        constructor () {
+            this.elements = {};
+            this._inc = 0;
+        }
+
+        add (id, x, y, r, data) {
+            let body;
+            id = id || 'global-' + this._inc++;
+            this.elements[id] = body = { x, y, r, data };
+            return body;
+        }
+
+        remove (id) {
+            this.elements[id] = null;
+        }
+
+        touches (elId1, elId2) {
+            let el1 = this.elements[elId1],
+                el2 = this.elements[elId2],
+                d = {
+                    x: Math.abs(el2.x - el1.x),
+                    y: Math.abs(el2.y - el1.y)
+                },
+                dist = Math.sqrt(Math.pow(d.x, 2) + Math.pow(d.y, 2));
+
+            return dist < el1.r + el2.r;
+        }
+
+        move (id, x, y) {
+            this.elements[id].x = x;
+            this.elements[id].y = y;
+        }
+        getCollisions (id) {
+            let el = this.elements[id],
+                collisions = [];
+            return Object.keys(this.elements).filter(elId => {
+                return (elId !== id && this.touches(id, elId));
+            }).map(elId => this.elements[elId]);
+        }
+    }
+</script>

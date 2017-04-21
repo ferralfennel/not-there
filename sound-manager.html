@@ -1,0 +1,29 @@
+<script>
+    class SoundManager {
+        constructor() {
+            this.ctx = new AudioContext();
+            this.buffers = {};
+        }
+
+        load (id, url) {
+            fetch(url)
+                .then(r => r.arrayBuffer())
+                .then(ab => {
+                    return this.ctx.decodeAudioData(ab);
+                }).then(buffer => {
+                    this.buffers[id] = buffer;
+                });
+        }
+        
+        play (id) {
+            let source = this.ctx.createBufferSource();
+            source.buffer = this.buffers[id];
+
+            source.connect(this.ctx.destination);
+
+            source.start(0);
+        }
+    }
+
+    window.Sound = new SoundManager();
+</script>

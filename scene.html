@@ -1,0 +1,52 @@
+<link rel="import" href="./rendered-element.html">
+<link rel="import" href="./world.html">
+<script>
+    class Scene extends RenderedElement {
+        constructor (ctx, opts={}) {
+            super(ctx, {
+                x: 0,
+                y: 0,
+                a: 0
+            });
+            this.gravity = opts.gravity || 0.04;
+            this.elements = [];
+            this.world = new World();
+        }
+
+        addElement (el) {
+            if (!(el instanceof RenderedElement)) {
+                throw new Error(`element is not of type 'RenderedElement'`);
+            }
+            el.scene = this;
+            this.elements.push(el);
+        }
+
+        removeElement (el) {
+            let index = this.elements.indexOf(el);
+            if (index >= 0) {
+                el.scene = null;
+                this.elements.splice(index, 1);
+            }
+        }
+
+        get width () {
+            return this.ctx.canvas.width;
+        }
+
+        get height () {
+            return this.ctx.canvas.height;
+        }
+
+        update (dt) {
+            this.elements.forEach(el => el.update(dt));
+        }
+
+        render () {
+            super.render();
+            this.ctx.fillStyle = '#213642';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+            this.elements.forEach(el => el.render());
+            super.afterRender();
+        }
+    }
+</script>

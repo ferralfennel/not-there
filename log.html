@@ -1,0 +1,28 @@
+<script>
+    (function () {
+        class Logger {
+            constructor () {
+                this.stack = [];
+            }
+            setContext (ctx) {
+                this.ctx = ctx;
+            }
+            log (v) {
+                this.stack.push(v);
+            }
+            render () {
+                this.ctx.save();
+                this.ctx.font = '30px Verdana';
+                this.ctx.fillStyle = 'white';
+                this.ctx.textBaseline = 'top';
+                this.stack.forEach((line, index) => {
+                    this.ctx.fillText(line, 10, 10 + (30 * index));
+                });
+                this.ctx.restore();
+                this.stack = [];
+            }
+        }
+        window.Logger = new Logger();
+    })();
+
+</script>

@@ -1,0 +1,16 @@
+<link rel="import" href="./section.html">
+<script>
+    class Section1 extends Section {
+        constructor(scene, opts) {
+            super(scene, opts, 500);
+            this.elements = [
+                new SpaceRock(scene, Math.random() * scene.width, -10, 10),
+                new SpaceRock(scene, Math.random() * scene.width, -100, 10),
+                new SpaceRock(scene, Math.random() * scene.width, -200, 10),
+                new SpaceRock(scene, Math.random() * scene.width, -220, 10),
+                new SpaceRock(scene, Math.random() * scene.width, -240, 10),
+                new SpaceRock(scene, Math.random() * scene.width, -240, 10)
+            ];
+        }
+    }
+</script>

@@ -1,0 +1,31 @@
+<script>
+    class KeyboardManager {
+
+        constructor () {
+            this.keysDown = {};
+        }
+
+        grab (parent) {
+            parent.addEventListener('keydown', (e) => {
+                this.keysDown[e.keyCode] = true;
+
+                if (!e.metaKey) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+            parent.addEventListener('keyup', (e) => {
+                this.keysDown[e.keyCode] = false;
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        }
+
+        isDown (keyCode) {
+            return this.keysDown[keyCode];
+        }
+
+    }
+
+    window.Keyboard = new KeyboardManager();
+</script>

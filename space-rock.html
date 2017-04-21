@@ -1,0 +1,24 @@
+<link rel="import" href="./entity.html">
+<script>
+    class SpaceRock extends Entity {
+        constructor(scene, x, y, size) {
+            super(scene.ctx, {
+                x,
+                y
+            });
+            this.size = size;
+            this.world = scene.world;
+            this.body = this.world.add(null, this.x, this.y, this.size, this);
+        }
+
+        render () {
+            super.render();
+            this.ctx.fillStyle = 'red';
+            this.ctx.beginPath();
+            this.ctx.arc(0, 0, this.size, 0, 2 * Math.PI);
+            this.ctx.fill();
+            this.ctx.closePath();
+            super.afterRender();
+        }
+    }
+</script>

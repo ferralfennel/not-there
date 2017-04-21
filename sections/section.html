@@ -1,0 +1,26 @@
+<script>
+    class Section extends RenderedElement {
+        constructor (scene, opts, height) {
+            super(scene.ctx, opts);
+            this.scene = scene;
+            this.height = height;
+        }
+
+        move (x, y) {
+            this.x += x;
+            this.y += y;
+        }
+
+        update (dt) {
+            this.elements.forEach(el => el.update(dt));
+        }
+
+        render () {
+            super.render();
+            this.elements.forEach(el => el.render());
+            super.afterRender();
+        }
+
+
+    }
+</script>

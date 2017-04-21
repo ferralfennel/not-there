@@ -1,0 +1,35 @@
+<script>
+    class Scroller {
+        constructor (scene, speed) {
+            this.scene = scene;
+            this.speed = speed;
+            this.scrollHeight = 0;
+            this.elements = [];
+        }
+        addElement (el) {
+            if (!(el instanceof RenderedElement)) {
+                throw new Error(`element is not of type 'RenderedElement'`);
+            }
+            this.elements.push(el);
+            this.scene.addElement(el);
+        }
+        cleanup () {
+            this.elements.forEach((el, index) => {
+                let rect = el.getRect();
+                if (rect.y > this.scene.height + rect.height / 2) {
+                    this.scene.removeElement(el);
+                    this.elements.splice(index, 1);
+                }
+            });
+        }
+        update (dt) {
+            let d = this.speed * dt;
+            this.scrollHeight += d;
+            this.elements.forEach(el => {
+                if (el.move) {
+                    el.move(0, d);
+                }
+            });
+        }
+    }
+</script>

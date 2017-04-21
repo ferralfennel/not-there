@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <link rel="manifest" href="/manifest.json">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            html, body {
+                margin: 0px;
+                padding: 0px;
+                overflow: hidden;
+            }
+            canvas {
+                transform: scale(0.5, 0.5);
+                transform-origin: 0 0;
+            }
+        </style>
+        <link rel="import" href="./level.html">
+        <link rel="import" href="./keyboard.html">
+        <link rel="import" href="./log.html">
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+        <script>
+
+
+            window.EasingFunctions = {
+                // no easing, no acceleration
+                linear: function (t) { return t },
+                // accelerating from zero velocity
+                easeInQuad: function (t) { return t*t },
+                // decelerating to zero velocity
+                easeOutQuad: function (t) { return t*(2-t) },
+                // acceleration until halfway, then deceleration
+                easeInOutQuad: function (t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t },
+                // accelerating from zero velocity 
+                easeInCubic: function (t) { return t*t*t },
+                // decelerating to zero velocity 
+                easeOutCubic: function (t) { return (--t)*t*t+1 },
+                // acceleration until halfway, then deceleration 
+                easeInOutCubic: function (t) { return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1 },
+                // accelerating from zero velocity 
+                easeInQuart: function (t) { return t*t*t*t },
+                // decelerating to zero velocity 
+                easeOutQuart: function (t) { return 1-(--t)*t*t*t },
+                // acceleration until halfway, then deceleration
+                easeInOutQuart: function (t) { return t<.5 ? 8*t*t*t*t : 1-8*(--t)*t*t*t },
+                // accelerating from zero velocity
+                easeInQuint: function (t) { return t*t*t*t*t },
+                // decelerating to zero velocity
+                easeOutQuint: function (t) { return 1+(--t)*t*t*t*t },
+                // acceleration until halfway, then deceleration 
+                easeInOutQuint: function (t) { return t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t }
+            };
+
+            let canvas = document.getElementById('canvas'),
+                lastTs = 0;
+            function resize() {
+                canvas.width = window.innerWidth * 2;
+                canvas.height = window.innerHeight * 2;
+            }
+            function init () {
+                let ctx = canvas.getContext('2d'),
+                    level = new Level(ctx, {});
+
+                Keyboard.grab(window);
+                Logger.setContext(ctx);
+
+                level.start();
+
+                function update(ts) {
+                    let dt = ts - lastTs,
+                        collisions;
+                    lastTs = ts;
+                    level.update(dt);
+                    level.render();
+                    Logger.render();
+                    requestAnimationFrame(update);
+                }
+                requestAnimationFrame(update);
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            init();
+        </script>
+    </body>
+</html>

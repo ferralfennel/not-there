@@ -1,0 +1,85 @@
+<link rel="import" href="./scene.html">
+<link rel="import" href="./player.html">
+<link rel="import" href="./space-rock.html">
+<link rel="import" href="./sound-manager.html">
+<link rel="import" href="./log.html">
+<link rel="import" href="./sections/section-1.html">
+<script>
+    const STARTING_ANIM_MS = 1000;
+
+    class Level {
+        constructor (ctx, json) {
+            this.descriptor = json;
+            this.scene = new Scene(ctx);
+            this.player = new Player(this.scene, {
+                x: this.scene.width / 2,
+                y: this.scene.height
+            });
+            let rect = this.player.getRect();
+            this.player.move(0, rect.height);
+            this.offset = 0;
+            this.sections = [];
+
+            Sound.load('noise' ,'/assets/sounds/noise.wav');
+        }
+
+        getNextSection (scene) {
+
+        }
+
+        update (dt) {
+            let collisions,
+                now = Date.now(),
+                totalSectionHeight,
+                lastSection,
+                firstSection,
+                since;
+            totalSectionHeight = this.sections.reduce((acc, section) => {
+                return acc + section.height;
+            }, 0);
+            firstSection = this.sections[0];
+            lastSection = this.sections[this.sections.length - 1];
+
+            if (!this.sections.length || totalSectionHeight < this.scene.height) {
+                let { height, y } = lastSection || {}
+                let newSection = new Section1(this.scene, { x: 0, y: (y || 0) + (-height || 0) });
+                this.scene.addElement(newSection);
+                this.sections.push(newSection);
+            }
+
+            if (firstSection && firstSection.y - firstSection.height > this.scene.height) {
+                this.scene.removeElement(this.sections.shift());
+            }
+
+            if (this.started) {
+                since = now - this.started;
+
+                if (since <= STARTING_ANIM_MS) {
+                    let e = EasingFunctions.easeOutQuad(since / STARTING_ANIM_MS);
+                    this.player.moveTo(this.player.x, this.scene.height - 200 * e);
+                } else {
+                    this.started = null;
+                }
+            }
+
+            let d = 0.4 * dt;
+            this.offset += d;
+            this.sections.forEach(section => {
+                section.move(0, d);
+            });
+            this.scene.update(dt);
+            collisions = this.scene.world.getCollisions('player');
+            collisions.forEach(col => {
+                console.log(col);
+            });
+        }
+
+        render () {
+            this.scene.render();
+        }
+
+        start () {
+            this.started = Date.now();
+        }
+    }
+</script>

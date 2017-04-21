@@ -1,0 +1,28 @@
+<script>
+    class TouchManager {
+
+        constructor () {
+            this.touches = [];
+        }
+
+        grab (parent) {
+            parent.addEventListener('touchstart', (e) => {
+                this.touches = e.targetTouches;
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            parent.addEventListener('touchend', (e) => {
+                this.touches = e.targetTouches;
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            parent.addEventListener('touchmove', (e) => {
+                //this.touches = e.targetTouches;
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        }
+    }
+
+    window.Touch = new TouchManager();
+</script>

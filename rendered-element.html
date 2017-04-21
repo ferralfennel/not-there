@@ -1,0 +1,29 @@
+<script>
+    class RenderedElement {
+        constructor(ctx, opts) {
+            this.ctx = ctx;
+            this.x = opts.x;
+            this.y = opts.y;
+            this.a = opts.a;
+        }
+
+        update (dt) {
+
+        }
+
+        render () {
+            this.ctx.save();
+            this.ctx.translate(this.x, this.y);
+            this.ctx.rotate(this.a);
+        }
+
+        afterRender () {
+            this.ctx.restore();
+        }
+
+        getRect () {
+            return { x: this.x, y: this.y, width: 0, height: 0 };
+        }
+
+    }
+</script>

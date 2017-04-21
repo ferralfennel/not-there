@@ -1,0 +1,23 @@
+<script>
+    class Entity extends RenderedElement {
+        constructor(ctx, opts) {
+            super(ctx, opts);
+        }
+
+        moveTo (x, y) {
+            this.x = x;
+            this.y = y || this.y;
+
+            this.body.x = this.x;
+            this.body.y = this.y;
+        }
+
+        move (x, y) {
+            this.moveTo(this.x + x, this.y + y);
+        }
+
+        getRect () {
+            return this.body && this.body.getRect ? this.body.getRect() : super.getRect();
+        }
+    }
+</script>
