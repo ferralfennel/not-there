@@ -61,5 +61,17 @@
         dispose () {
             this.scene.removeElement(this);
         }
+
+        toJSON () {
+            return {
+                x: this.x,
+                y: this.y
+            };
+        }
+
+        updateState (json) {
+            this.x = json.x;
+            this.y = json.y;
+        }
     }
 </script>

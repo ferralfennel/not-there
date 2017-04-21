@@ -1,4 +1,5 @@
 <link rel="import" href="../entity.html">
+<link rel="import" href="../socket-manager.html">
 <script>
     class Wall extends Entity {
         constructor(scene, x, y, width) {
@@ -15,10 +16,12 @@
         }
 
         render () {
-            super.render();
-            this.ctx.fillStyle = 'red';
-            this.ctx.fillRect(0, 0, this.body.width, this.body.height);
-            super.afterRender();
+            if (Socket.isDriver) {
+                super.render();
+                this.ctx.fillStyle = 'red';
+                this.ctx.fillRect(0, 0, this.body.width, this.body.height);
+                super.afterRender();
+            }
         }
     }
 </script>
