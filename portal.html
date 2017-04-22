@@ -82,6 +82,29 @@
                 this.ctx.fillRect(0, 0, PORTAL_WIDTH, 6);
                 this.ctx.restore();
 
+                if (this.type === 'entry' && this.boundTo) {
+                    let gradient;
+                    this.ctx.save();
+                    this.ctx.translate(-PORTAL_WIDTH / 2 - 31, 0);
+                    gradient = this.ctx.createLinearGradient(0, 0, 30, 0);
+                    gradient.addColorStop(0, 'transparent');
+                    gradient.addColorStop(1, PORTAL_COLOR);
+
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.fillRect(0, 0, 30, 6);
+                    this.ctx.restore();
+
+                    this.ctx.save();
+                    this.ctx.translate(PORTAL_WIDTH / 2 + 1, 0);
+                    gradient = this.ctx.createLinearGradient(0, 0, 30, 0);
+                    gradient.addColorStop(0, PORTAL_COLOR);
+                    gradient.addColorStop(1, 'transparent');
+
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.fillRect(0, 0, 30, 6);
+                    this.ctx.restore();
+                }
+
                 this.ctx.save();
                 this.ctx.translate(-PORTAL_WIDTH / 3, 20);
                 this.ctx.beginPath();
