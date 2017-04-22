@@ -3,6 +3,10 @@
 <script>
 
     const HIT_DELAY = 700;
+    const LIGHT_CHANGE_SPEED = .05;
+    const MIN_LIGHT = .2;
+    const TILT_SPEED = .01;
+    const MAX_TILT = .2;
 
     class Player extends Entity {
         constructor(scene, opts) {
@@ -15,6 +19,7 @@
               y: this.y,
               r: 50
             });
+            this.a = 0;
             this.velY = 0;
             this.velX = 0;
             this.accel = 0.1;
@@ -32,7 +37,8 @@
                 scale: 3,
                 gravity: 0.8,
                 number: 10,
-                initialVel: 0.1
+                initialVel: 0.1,
+                y: this.body.r + 25
             });
         }
 
@@ -111,9 +117,44 @@
                 this.ctx.fill();
                 this.ctx.restore();
 
-                this.ctx.fillStyle = '#79f6dd';
+                let lastMove = this.xHistory[this.xHistory.length - 1] || 0;
+                let dir = 0;
+
+                if (lastMove > 0) {
+                    dir = -1;
+                    this.a += TILT_SPEED;
+                } else if (lastMove < 0){
+                    dir = 1;
+                    this.a -= TILT_SPEED;
+                } else {
+                    if (this.a < 0) {
+                        this.a += TILT_SPEED;
+                    } else if (this.a > 0){
+                        this.a -= TILT_SPEED;
+                    }
+                }
+
+                if (this.a > MAX_TILT) {
+                    this.a = MAX_TILT;
+                } else if (this.a < -MAX_TILT) {
+                    this.a = -MAX_TILT;
+                }
+
+                if (dir === 0) {
+                    this.alphaLeft = (this.alphaLeft || MIN_LIGHT) - LIGHT_CHANGE_SPEED;
+                    this.alphaRight = (this.alphaRight || MIN_LIGHT) - LIGHT_CHANGE_SPEED;
+                } else {
+                    this.alphaLeft = (this.alphaLeft || MIN_LIGHT) + LIGHT_CHANGE_SPEED * dir;
+                    this.alphaRight = (this.alphaRight || MIN_LIGHT) - LIGHT_CHANGE_SPEED * dir;
+                }
+            
+                if (this.alphaLeft > 1) { this.alphaLeft = 1; }
+                if (this.alphaRight > 1) { this.alphaRight = 1; }
+                if (this.alphaLeft < MIN_LIGHT) { this.alphaLeft = MIN_LIGHT; }
+                if (this.alphaRight < MIN_LIGHT) { this.alphaRight = MIN_LIGHT; }
 
                 // Left wing
+                this.ctx.fillStyle = `rgba(121, 246, 221, ${ this.alphaLeft })`
                 this.ctx.save();
                 this.ctx.translate(-this.velX * 3, 0);
                 this.ctx.beginPath();
@@ -125,6 +166,7 @@
                 this.ctx.restore();
 
                 // Right wing
+                this.ctx.fillStyle = `rgba(121, 246, 221, ${ this.alphaRight })`
                 this.ctx.save();
                 this.ctx.translate(-this.velX * 3, 0);
                 this.ctx.beginPath();
@@ -137,9 +179,11 @@
 
                 // Tail particles
                 this.tailParticles.particles.forEach(p => {
+                    let h = this.xHistory[this.xHistory.length - 1];
+                    let translateX = h ? h * -3 : 0;
                     this.ctx.save();
-                    this.ctx.fillStyle = '#79f6dd';
-                    this.ctx.translate(p.x, p.y + 30);
+                    this.ctx.fillStyle = 'rgba(121, 246, 221, 1)'
+                    this.ctx.translate(p.x + translateX, p.y + 30);
                     this.ctx.scale(p.scale, p.scale);
                     this.ctx.rotate(45 * Math.PI / 180);
                     this.ctx.fillRect(0, 0, 5, 5);
@@ -148,15 +192,22 @@
 
                 // Romboids
                 for (let i = 0; i < 3; i++) {
-                    let scale = 1 - (i * 0.1);
+                  let multi = Math[i % 2 === 0 ? 'sin' : 'cos'](this.lt / 250)
+                  let alpha = (multi + 1) / 4 + .5
+
+                  this.ctx.fillStyle = `rgba(121, 246, 221, ${ alpha })`
+
+                    let scale = 1 - i * .1 + multi / 10;
+                    let translateX = this.xHistory[this.xHistory.length - i] * i * -1;
+                    let translateY = romboidSize * i * 2 + romboidSpacing * 2;
+
+                    if (Number.isNaN(translateX)) { translateX = 0; }
+
                     this.ctx.save();
-                    if (i !== 0) {
-                        let index = i - 1;
-                        this.ctx.translate(this.xHistory[index] * index * -0.7, 0);
-                    }
-                    this.ctx.scale(scale, scale);
+                    this.ctx.translate(translateX, translateY);
                     this.ctx.globalAlpha = scale * 1.2;
-                    this.romboid(0, (romboidSize * i * 2) + romboidSpacing * 2, romboidSize * scale)
+                    this.ctx.scale(scale, scale);
+                    this.romboid(0, 0, romboidSize * scale);
                     this.ctx.restore();
                 }
                 // Shield
