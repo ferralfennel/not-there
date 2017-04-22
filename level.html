@@ -24,7 +24,7 @@
 
     class Level {
         constructor (ctx, options = {}) {
-            this.seed = 'a';
+            this.seed = String(Math.random());
             this.chance = new Chance(this.seed);
             this.solo = options.solo || false;
             this.scene = new Scene(ctx);
