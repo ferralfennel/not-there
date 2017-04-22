@@ -1,6 +1,9 @@
 <link rel="import" href="./entity.html">
 <link rel="import" href="./particle-generator.html">
 <script>
+
+    const HIT_DELAY = 700;
+
     class Player extends Entity {
         constructor(scene, opts) {
             super(scene.ctx, opts);
@@ -10,7 +13,7 @@
               type: 'circle',
               x: this.x,
               y: this.y,
-              r: 10
+              r: 50
             });
             this.velY = 0;
             this.velX = 0;
@@ -18,12 +21,15 @@
             this.friction = 0.5;
             this.particleGenerator = new ParticleGenerator({
                 decay: 0.1,
-                maxSize: 3
+                maxSize: 5,
+                scale: 5
             });
+            this.life = 3;
         }
 
         update (dt) {
-            let moving = false;
+            let moving = false,
+                now = Date.now();
 
             if (Keyboard.isDown(37)) {
                 this.velX = Math.max(this.velX - this.accel, -2);
@@ -45,6 +51,9 @@
             if (this.dead) {
                 this.particleGenerator.tick(dt);
             } else {
+                if (this.hitDelay && now - this.hitDelay > HIT_DELAY) {
+                    this.hitDelay = null;
+                }
                 this.move(this.velX * dt);
             }
 
@@ -52,10 +61,14 @@
 
         render () {
             let r = this.body.r
+            let s = 8
+            let romboidSize = 18
+            let romboidSpacing = 14
             super.render();
 
             this.ctx.fillStyle = '#fff';
 
+            // Main Body
             this.ctx.beginPath();
             this.ctx.moveTo(0, -r);
             this.ctx.lineTo(-r / 2, -r / 2);
@@ -63,26 +76,89 @@
             this.ctx.lineTo(0, 0);
             this.ctx.lineTo(r / 2, r / 2);
             this.ctx.lineTo(r / 2, -r / 2);
+            this.ctx.closePath();
             this.ctx.fill();
 
-            // if (!this.dead) {
-            //     this.ctx.fillStyle = 'white';
-            //     this.ctx.beginPath();
-            //     this.ctx.arc(0, 0, 10, 0, 2 * Math.PI);
-            //     this.ctx.fill();
-            //     this.ctx.closePath();
-            // } else {
-            //     this.particleGenerator.particles.forEach(p => {
-            //         this.ctx.save();
-            //         this.ctx.fillStyle = 'white';
-            //         this.ctx.translate(p.x, p.y);
-            //         this.ctx.scale(p.scale, p.scale);
-            //         this.ctx.fillRect(0, 0, 10, 10);
-            //         this.ctx.restore();
-            //     });
-            // }
+            this.ctx.fillStyle = '#79f6dd';
+
+            // Left wing
+            this.ctx.beginPath();
+            this.ctx.moveTo(-r / 2 - s, - r / 2 + s);
+            this.ctx.lineTo(-r, 0);
+            this.ctx.lineTo(-r / 2 - s, r / 2 - s);
+            this.ctx.closePath();
+            this.ctx.fill();
+
+            // Right wing
+            this.ctx.beginPath();
+            this.ctx.moveTo(r / 2 + s, - r / 2 + s);
+            this.ctx.lineTo(r, 0);
+            this.ctx.lineTo(r / 2 + s, r / 2 - s);
+            this.ctx.closePath();
+            this.ctx.fill();
+
+            // Romboids
+            for (let i = 0; i < 3; i++) {
+                this.romboid(0, (romboidSize * i * 2) + romboidSpacing * 2, romboidSize)
+            }
+
+            if (!this.dead) {
+                if (this.hitDelay) {
+                    this.ctx.globalAlpha = Math.random() < 0.5 ? 0.6 : 0.8;
+                }
+                this.ctx.fillStyle = 'white';
+                this.ctx.strokeStyle = 'white';
+                // Shield
+                if (this.life === 3) {
+                    this.ctx.fillStyle = 'rgba(255, 255, 255, .05)';
+                    this.ctx.beginPath();
+                    this.ctx.arc(0, 0, this.body.r * 2, 0, 2 * Math.PI);
+                    this.ctx.fill();
+
+                    this.ctx.beginPath();
+                    this.ctx.strokeStyle = '#fff';
+                    this.ctx.lineWidth = 4;
+                    this.ctx.arc(0, 0, this.body.r * 2, 1 * Math.PI, 0);
+                    this.ctx.stroke();
+                }
+                this.ctx.beginPath();
+                this.ctx.fill();
+                this.ctx.closePath();
+            } else {
+                this.particleGenerator.particles.forEach(p => {
+                    this.ctx.save();
+                    this.ctx.fillStyle = 'white';
+                    this.ctx.translate(p.x, p.y);
+                    this.ctx.scale(p.scale, p.scale);
+                    this.ctx.fillRect(0, 0, 10, 10);
+                    this.ctx.restore();
+                });
+            }
             
             super.afterRender();
+        }
+    
+        romboid (x, y, hh) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, y - hh);
+            this.ctx.lineTo(x - hh, y);
+            this.ctx.lineTo(x, y + hh);
+            this.ctx.lineTo(x + hh, y);
+            this.ctx.closePath();
+            this.ctx.fill();
+        }
+
+        hit (points) {
+            let now = Date.now();
+            if (this.hitDelay) {
+                return;
+            }
+            this.life = Math.max(0, this.life - points);
+            if (this.life <= 0) {
+                this.die();
+            } else {
+                this.hitDelay = now;
+            }
         }
 
         die () {

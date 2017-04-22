@@ -13,8 +13,15 @@
                 x,
                 y,
                 width,
-                height: 1
+                height: 1,
+                data: this
             });
+        }
+
+        collisionCallback (other) {
+            if (other instanceof Player) {
+                other.hit(3);
+            }
         }
 
         render () {
