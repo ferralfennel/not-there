@@ -10,15 +10,23 @@
                 margin: 0px;
                 padding: 0px;
                 overflow: hidden;
+                background: #242033;
             }
+
             #shell {
                 width: 100vw;
                 height: 100vh;
             }
+
             canvas {
                 transform: scale(0.5, 0.5);
                 transform-origin: 0 0;
+                left: 0;
+                position: absolute;
+                top: 0;
             }
+
+            /*body.role-driver */
         </style>
         <link rel="import" href="./level.html">
         <link rel="import" href="./keyboard.html">
@@ -125,6 +133,7 @@
                         });
                         Socket.socket.on('role-choosen', (role) => {
                             this.buttons[role].setAttribute('disabled', true);
+                            document.body.className += ` role-${ role }`;
                         });
 
                         Socket.socket.on('all-ready', () => {
@@ -148,6 +157,7 @@
                 playSolo() {
                     Socket.isDriver = true;
                     Socket.role = 'driver';
+                    document.body.className += ' role-driver';
                     this.start();
                 }
 
@@ -213,7 +223,7 @@
                 }
 
                 resize () {
-                    this.canvas.width = window.innerWidth * 2;
+                    this.canvas.width = Math.min(window.innerWidth * 2, 1500);
                     this.canvas.height = window.innerHeight * 2;
                 }
             }

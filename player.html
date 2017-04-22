@@ -7,6 +7,9 @@
     const MIN_LIGHT = .2;
     const TILT_SPEED = .01;
     const MAX_TILT = .2;
+    const ROMBOID_BASE_SIZE = 10;
+    const ROMBOID_SPACING = 8;
+    const WING_SPACING = 4;
 
     class Player extends Entity {
         constructor(scene, opts) {
@@ -17,13 +20,13 @@
               type: 'circle',
               x: this.x,
               y: this.y,
-              r: 50
+              r: 30
             });
             this.a = 0;
             this.velY = 0;
             this.velX = 0;
-            this.accel = 0.1;
-            this.friction = 0.5;
+            this.accel = 0.02;
+            this.friction = 0.01;
             this.particleGenerator = new ParticleGenerator({
                 decay: 0.1,
                 maxSize: 5,
@@ -33,9 +36,9 @@
             this.life = 3;
             this.xHistory = [0, 0];
             this.tailParticles = new ParticleGenerator({
-                decay: 0.1,
+                decay: 0.01,
                 maxSize: 3,
-                scale: 3,
+                scale: 2,
                 gravity: 0.8,
                 number: 10,
                 initialVel: 0.1,
@@ -91,9 +94,8 @@
 
         render () {
             let r = this.body.r
-            let s = 8
-            let romboidSize = 18
-            let romboidSpacing = 14
+            let s = WING_SPACING;
+
             super.render();
 
             if (!this.dead) {
@@ -182,6 +184,7 @@
                 this.tailParticles.particles.forEach(p => {
                     let h = this.xHistory[this.xHistory.length - 1];
                     let translateX = h ? h * -3 : 0;
+
                     this.ctx.save();
                     this.ctx.fillStyle = 'rgba(121, 246, 221, 1)'
                     this.ctx.translate(p.x + translateX, p.y + 30);
@@ -200,7 +203,7 @@
 
                     let scale = 1 - i * .1 + multi / 10;
                     let translateX = this.xHistory[this.xHistory.length - i] * i * -1;
-                    let translateY = romboidSize * i * 2 + romboidSpacing * 2;
+                    let translateY = ROMBOID_BASE_SIZE * i * 2 + ROMBOID_SPACING * 2;
 
                     if (Number.isNaN(translateX)) { translateX = 0; }
 
@@ -208,18 +211,23 @@
                     this.ctx.translate(translateX, translateY);
                     this.ctx.globalAlpha = scale * 1.2;
                     this.ctx.scale(scale, scale);
-                    this.romboid(0, 0, romboidSize * scale);
+                    this.romboid(0, 0, ROMBOID_BASE_SIZE * scale);
                     this.ctx.restore();
                 }
                 // Shield
                 if (this.life === 3) {
-                    this.ctx.fillStyle = 'rgba(255, 255, 255, .05)';
+                    let fillMulti = Math.sin(this.lt / 200);
+                    let fillAlpha = (fillMulti + 1) / 4 / 10 + .05;
+                    let strokeMulti = Math.cos(this.lt / 200);
+                    let strokeAlpha = (strokeMulti + 1) / 4 + .5;
+
+                    this.ctx.fillStyle = `rgba(255, 255, 255, ${ fillAlpha })`;
                     this.ctx.beginPath();
                     this.ctx.arc(0, 0, this.body.r * 2, 0, 2 * Math.PI);
                     this.ctx.fill();
 
                     this.ctx.beginPath();
-                    this.ctx.strokeStyle = '#fff';
+                    this.ctx.strokeStyle = `rgba(255, 255, 255, ${ strokeAlpha })`;
                     this.ctx.lineWidth = 4;
                     this.ctx.arc(0, 0, this.body.r * 2, 1 * Math.PI, 0);
                     this.ctx.stroke();
