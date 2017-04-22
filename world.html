@@ -9,11 +9,12 @@
             let body;
             id = id || 'global-' + this._inc++;
             this.elements[id] = body = props;
+            this.elements[id].id = id;
             return body;
         }
 
         remove (id) {
-            this.elements[id] = null;
+            delete this.elements[id];
         }
 
         touches (elId1, elId2) {
