@@ -9,6 +9,7 @@
 <link rel="import" href="./sections/paddles.html">
 <link rel="import" href="./sections/collectable.html">
 <link rel="import" href="./marker.html">
+<link rel="import" href="./stars.html">
 <link rel="import" href="./socket-manager.html">
 <link rel="import" href="./mouse-manager.html">
 <link rel="import" href="./inventory.html">
@@ -33,6 +34,8 @@
             this.chance = new Chance(this.seed);
             this.solo = options.solo || false;
             this.scene = new Scene(ctx);
+            this.stars = new Stars(ctx, this.scene);
+            this.scene.elements.push(this.stars);
             this.player = new Player(this.scene, {
                 x: this.scene.width / 2,
                 y: this.scene.height,
@@ -196,7 +199,7 @@
                 }
             }
 
-            if (!this.frozen) { this.score += d / 200; }
+            if (!this.frozen) { this.score += d / 500; }
 
             Logger.log("Player y: " + this.player.y);
             Logger.log("Player limit: " + this.playerLimit);

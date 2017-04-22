@@ -46,11 +46,11 @@ body.role-assist {
     background-color: #252235;
 }
 
-body.role-assist canvas {
+body.role-assist canvas{
     background-color: #262339;
 }
 
-body.role-assist canvas {
+body.role-assist canvas{
     left: calc(100vw - 750px);
 }
 

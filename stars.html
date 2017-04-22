@@ -1,0 +1,51 @@
+<script>
+  const STARS_COUNT = 20;
+
+  class Stars {
+    constructor (ctx, scene) {
+      this.ctx = ctx;
+      this.scene = scene;
+      this.stars = [];
+    }
+
+    update (dt) {
+      while (this.stars.length < STARS_COUNT) {
+        this.addStar();
+      }
+
+      this.initialised = true;
+
+      for (let star of this.stars) {
+        star.y += star.v * dt;
+
+        if (star.y > this.scene.height + star.r) {
+          this.stars.splice(this.stars.indexOf(star), 1);
+        }
+      }
+    }
+
+    addStar () {
+      let x = Math.random() * this.scene.width;
+      let y = Math.random() * this.scene.height;
+      let r = Math.random() * 6 + 1;
+      let a = Math.random() * .1 + Math.random() * .9;
+      let v = Math.random() * .4 + .4;
+
+      if (this.initialised) {
+        y = -20;
+      }
+
+      this.stars.push({ x, y, r, a, v });
+    }
+
+    render () {
+      for (let star of this.stars) {
+        this.ctx.fillStyle = `rgba(255, 255, 255, ${ star.a })`;
+        this.ctx.beginPath();
+        this.ctx.arc(star.x, star.y, star.r, 0, 2 * Math.PI);
+        this.ctx.fill();
+        this.ctx.closePath();
+      }
+    }
+  }
+</script>
