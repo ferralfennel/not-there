@@ -32,14 +32,14 @@
             return { x: this.x, y: this.y, width: 0, height: 0 };
         }
     
-        romboid (x, y, hh) {
+        romboid (x, y, hh, prop = 'fill') {
             this.ctx.beginPath();
             this.ctx.moveTo(x, y - hh);
             this.ctx.lineTo(x - hh, y);
             this.ctx.lineTo(x, y + hh);
             this.ctx.lineTo(x + hh, y);
             this.ctx.closePath();
-            this.ctx.fill();
+            this.ctx[prop]();
         }
 
     }
