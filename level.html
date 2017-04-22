@@ -22,6 +22,8 @@
 
     class Level {
         constructor (ctx, options = {}) {
+            this.seed = 'a';
+            this.chance = new Chance(this.seed);
             this.solo = options.solo || false;
             this.scene = new Scene(ctx);
             this.player = new Player(this.scene, {
@@ -42,6 +44,10 @@
             Socket.on('add-marker', (e) => {
                 this.addMarker(e.x, e.y, e.role);
             });
+            
+            Socket.on('add-section', data => {
+                if (!Socket.isDriver) { this.reproduceSection(data); }
+            })
 
             if (Socket.isDriver) {
                 setInterval(() => {
@@ -86,6 +92,22 @@
             Sound.load('noise' ,'/assets/sounds/noise.wav');
         }
 
+        reproduceSection(data) {
+            let Constr = {};
+
+            for (let section of SECTIONS_INDEX) {
+                if (section.constr.type === data.type) {
+                    Constr = section.constr;
+                    break;
+                }
+            }
+
+            let newSection = this.generateSection(data.y, data.height, Constr, data.seed);
+
+            this.scene.addElement(newSection.element);
+            this.sections.push(newSection.element);
+        }
+
         placePortal (x, y) {
             if (!this.entryPortal) {
                 this.entryPortal = new Portal(this.scene, { x, y, type: 'entry' });
@@ -110,10 +132,6 @@
             this.scene.addElement(m);
         }
 
-        getNextSection (scene) {
-
-        }
-
         update (dt) {
             // Slow down if the player has been hit
             let d = (this.player.hitDelay ? 0.2 : 0.4) * dt,
@@ -134,9 +152,16 @@
             if (Socket.isDriver) {
                 if (this.playerReady && (!this.sections.length || totalSectionHeight < this.scene.height)) {
                     let { height, y } = lastSection || {}
-                    let newSection = this.generateSection(y - GENERATE_PADDING, height);
-                    this.scene.addElement(newSection);
-                    this.sections.push(newSection);
+                    y = y - GENERATE_PADDING;
+                    let newSection = this.generateSection(y, height);
+
+                    this.scene.addElement(newSection.element);
+                    this.sections.push(newSection.element);
+
+                    let seed = newSection.element.seed
+                    let { type } = newSection
+
+                    Socket.send('add-section', { seed, type, y, height });
                 }
 
                 if (firstSection && firstSection.y - firstSection.height > this.scene.height) {
@@ -214,31 +239,35 @@
             this.frozen = true;
         }
 
-        generateSection(y, height) {
-            let Constr;
-            let ltotal = 0;
-            let lcur = 0;
-            let ltarget;
+        generateSection(y, height, Constr = null, seed = null) {
+            if (!Constr) {
+                let ltotal = 0;
+                let lcur = 0;
+                let ltarget;
 
-            for (let section of SECTIONS_INDEX) {
-                ltotal += section.likelyhood;
-            }
-
-            ltarget = Math.random() * ltotal;
-
-            for (let section of SECTIONS_INDEX) {
-                if (lcur + section.likelyhood > ltarget) {
-                    Constr = section.constr;
-                    break;
+                for (let section of SECTIONS_INDEX) {
+                    ltotal += section.likelyhood;
                 }
 
-                lcur += section.likelyhood;
+                ltarget = this.chance.random() * ltotal;
+
+                for (let section of SECTIONS_INDEX) {
+                    if (lcur + section.likelyhood > ltarget) {
+                        Constr = section.constr;
+                        break;
+                    }
+
+                    lcur += section.likelyhood;
+                }
             }
 
-            let section = new Constr(this.scene, { x: 0, y: 0 });
+            seed = seed || String(this.chance.random());
+
+            let section = new Constr(this.scene, { x: 0, y: 0, seed }, height);
+
             section.move(0, (y || 0) + (-height || 0));
 
-            return section
+            return { element: section, type: Constr.type }
         }
 
         render () {

@@ -5,8 +5,12 @@
         constructor(scene, opts) {
             super(scene, opts, 500);
             this.elements = [
-                new Asteroid(scene, Math.random() * scene.width, 0, { size: Math.random() * 150 + 20 })
+                new Asteroid(scene, this.chance.random() * scene.width, 0, { seed: String(this.chance.random()), size: this.chance.random() * 150 + 20 })
             ];
+        }
+
+        static get type() {
+            return 'asteroid-single';
         }
     }
 </script>

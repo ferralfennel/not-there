@@ -1,5 +1,4 @@
 <link rel="import" href="../entity.html">
-<link rel="import" href="../socket-manager.html">
 <link rel="import" href="../image-manager.html">
 <script>
 const ASSETS_COUNT = 4
@@ -11,12 +10,13 @@ const ASSETS_COUNT = 4
                 rotate: true,
                 move: true
             }, opts);
+            this.chance = new Chance(this.opts.seed);
             this.a = 1;
-            this.rotationDir = Math.random() > .5 ? 1 : -1;
-            this.dir = Math.random() > .5 ? 1 : -1;
-            this.rotationSpeed = Math.random() / 500 * this.rotationDir;
-            this.speed = Math.random() / 5 * this.dir;
-            this.assetIndex = Math.floor(Math.random() * (ASSETS_COUNT - 1)) + 1;
+            this.rotationDir = this.chance.random() > .5 ? 1 : -1;
+            this.dir = this.chance.random() > .5 ? 1 : -1;
+            this.rotationSpeed = this.chance.random() / 500 * this.rotationDir;
+            this.speed = this.chance.random() / 5 * this.dir;
+            this.assetIndex = Math.floor(this.chance.random() * (ASSETS_COUNT - 1)) + 1;
             this.size = this.opts.size;
             this.world = scene.world;
             this.body = this.world.add(null, {
@@ -75,8 +75,6 @@ const ASSETS_COUNT = 4
         }
 
         render () {
-            if (!Socket.isDriver) { return; }
-
             super.render();
             if (!this.exploding) {
                 this.ctx.drawImage(this.image, -this.size, -this.size, this.size * 2, this.size * 2);

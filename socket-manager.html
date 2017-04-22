@@ -1,7 +1,7 @@
 <script>
     class SocketManager {
         constructor () {
-            let paramsReg = /\?host=(.+)&port=(\d{4})/,
+            let paramsReg = /\?host=(.+)&port=(\d{2,4})/,
                 matches = location.search.match(paramsReg);
             this.host = matches && matches[1] || 'localhost';
             this.port = matches && matches[2] || '3000';

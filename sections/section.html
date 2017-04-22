@@ -2,6 +2,8 @@
     class Section extends RenderedElement {
         constructor (scene, opts, height) {
             super(scene.ctx, opts);
+            this.seed = opts.seed || Math.random();
+            this.chance = new Chance(this.seed);
             this.scene = scene;
             this.height = height;
         }
@@ -27,6 +29,8 @@
             super.afterRender();
         }
 
-
+        static get type() {
+            return 'void';
+        }
     }
 </script>
