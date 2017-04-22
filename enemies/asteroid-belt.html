@@ -11,12 +11,26 @@
 
             this.asteroids = [];
 
-            for (let i = 0; i < 20; i++) {
-                this.asteroids.push(new Asteroid(scene, x + Math.random() * scene.width, y + Math.random() * 100 - 50, {
-                    size: Math.random() * 50 + 10,
+            this.sizes = [10, 10, 10, 10, 10, 20, 30, 30, 30, 30, 60, 120];
+
+            let cursorX = 0, cursorY = Math.random() * 50, size;
+
+            while (cursorX < scene.width + 50) {
+                size = this.sizes[Math.floor(Math.random() * this.sizes.length)];
+
+                if (cursorY > Math.random() * 200 + 100) {
+                    cursorY = Math.random() * 200;
+                    cursorX += Math.random() * size * 2;
+                }
+
+                this.asteroids.push(new Asteroid(scene, x + cursorX, y + cursorY, {
+                    size: size,
                     move: false,
                     rotate: true
                 }));
+
+                cursorY += (size * 2) + Math.random() * size;
+                cursorX += Math.random() * (size / 2) + 10;
             }
 
             this.body = new BodyGroup(this.asteroids.map(a => a.body));
