@@ -28,6 +28,14 @@ const ASSETS_COUNT = 4
                 data: this
             });
 
+            this.explosion = new ParticleGenerator({
+                decay: 0.2,
+                maxSize: 5,
+                scale: 5,
+                gravity: 0.1,
+                number: 15
+            });
+
             this.load();
         }
 
@@ -36,8 +44,17 @@ const ASSETS_COUNT = 4
         }
 
         collisionCallback (other) {
-            if (other instanceof Player) {
+            if (other instanceof Player && !other.hitDelay) {
                 other.hit(1);
+                this.explode();
+                this.world.remove(this.body.id);
+            }
+        }
+
+        explode () {
+            if (!this.exploding) {
+                this.exploding = true;
+                this.explosion.generate();
             }
         }
 
@@ -48,13 +65,26 @@ const ASSETS_COUNT = 4
             if (this.opts.move) {
                 this.move(this.speed * dt, 0);
             }
+            if (this.exploding) {
+                this.explosion.tick(dt);
+            }
         }
 
         render () {
             if (!Socket.isDriver) { return; }
 
             super.render();
-            this.ctx.drawImage(this.image, -this.size, -this.size, this.size * 2, this.size * 2)
+            if (!this.exploding) {
+                this.ctx.drawImage(this.image, -this.size, -this.size, this.size * 2, this.size * 2);
+            } else {
+                this.explosion.particles.forEach(p => {
+                    this.ctx.save();
+                    this.ctx.translate(p.x, p.y);
+                    this.ctx.scale(p.scale, p.scale);
+                    this.ctx.drawImage(this.image, -10, -10, 20, 20);
+                    this.ctx.restore();
+                });
+            }
             super.afterRender();
         }
     }
