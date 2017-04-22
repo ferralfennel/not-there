@@ -10,7 +10,8 @@
                 margin: 0px;
                 padding: 0px;
                 overflow: hidden;
-                background: #242033;
+                background-color: #242033;
+                transition: background-color 2s;
             }
 
             #shell {
@@ -21,12 +22,65 @@
             canvas {
                 transform: scale(0.5, 0.5);
                 transform-origin: 0 0;
-                left: 0;
                 position: absolute;
+                left: 0;
+                top: 0;
+                background-image: linear-gradient(#492540, #34314c);
+            }
+
+            .show-role-assist, .show-role-driver {
+                display: none;
+            }
+
+            body.role-assist .show-role-assist {
+                display: block;
+            }
+
+            body.role-driver .show-role-driver {
+                display: block;
+            }
+
+            body.role-driver {
+                background-color: #252235;
+            }
+
+            body.role-assist {
+                background-color: #252235;
+            }
+
+            body.role-assist canvas {
+                background-color: #262339;
+            }
+
+            .role-screen {
+                position: absolute;
+                position: absolute;
+                left: 750px;
+                width: calc(100vw - 750px);
+                height: 100vh;
+                text-align: center;
                 top: 0;
             }
 
-            /*body.role-driver */
+            body.role-assist canvas {
+                left: calc(100vw - 750px);
+            }
+
+            body.role-assist .role-screen {
+                left: 0;
+            }
+
+            .role-screen .inner {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            .role-screen img {
+                margin: auto;
+                width: 120px;
+            }
         </style>
         <link rel="import" href="./level.html">
         <link rel="import" href="./keyboard.html">
@@ -44,7 +98,16 @@
         <template id="game">
             <canvas id="canvas"></canvas>
         </template>
-        <div id="shell"></div>
+        <template id="role-screen">
+            <div class="role-screen">
+                <div class='inner'>
+                    <img class="avatar show-role-driver" src="/assets/avatar/driver.svg" />
+                    <img class="avatar show-role-assist" src="/assets/avatar/assist.svg" />
+                </div>
+            </div>
+        </template>
+        <div id="shell">
+        </div>
         <script>
 
             window.EasingFunctions = {
@@ -90,6 +153,15 @@
                         this.shell.removeChild(this.shell.firstChild);
                     }
                     this.shell.appendChild(this.root);
+                }
+            }
+
+            class RoleScreen {
+                constructor (parent) {
+                    this.template = document.getElementById('role-screen');
+                    this.parent = parent;
+                    this.root = this.template.content.cloneNode(true);
+                    this.parent.appendChild(this.root);
                 }
             }
 
@@ -158,6 +230,7 @@
                     Socket.isDriver = true;
                     Socket.role = 'driver';
                     document.body.className += ' role-driver';
+                    //foo document.body.className += ' role-assist';
                     this.start();
                 }
 
@@ -173,6 +246,7 @@
                 }
 
                 start () {
+
                     this.shell.animate({
                         opacity: [1, 0]
                     }, {
@@ -211,6 +285,8 @@
                     this.level.start();
 
                     requestAnimationFrame(this.update.bind(this));
+
+                    new RoleScreen(this.shell);
                 }
 
                 update (ts) {
@@ -227,12 +303,14 @@
                     this.canvas.height = window.innerHeight * 2;
                 }
             }
-            
+
             let mainMenu = new MainMenu();
+
             mainMenu.onStart(() => {
                 let game = new Game();
                 game.show();
             });
+
             mainMenu.show();
         </script>
     </body>

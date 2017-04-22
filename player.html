@@ -25,8 +25,8 @@
             this.a = 0;
             this.velY = 0;
             this.velX = 0;
-            this.accel = 0.02;
-            this.friction = 0.01;
+            this.accel = 0.08;
+            this.friction = 0.08;
             this.particleGenerator = new ParticleGenerator({
                 decay: 0.1,
                 maxSize: 5,
@@ -186,7 +186,7 @@
                     let translateX = h ? h * -3 : 0;
 
                     this.ctx.save();
-                    this.ctx.fillStyle = 'rgba(121, 246, 221, 1)'
+                    this.ctx.fillStyle = 'rgba(121, 246, 221, 0)'
                     this.ctx.translate(p.x + translateX, p.y + 30);
                     this.ctx.scale(p.scale, p.scale);
                     this.ctx.rotate(45 * Math.PI / 180);
