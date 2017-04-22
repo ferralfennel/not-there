@@ -134,18 +134,8 @@
                     this.ctx.restore();
                 });
             }
-            
+
             super.afterRender();
-        }
-    
-        romboid (x, y, hh) {
-            this.ctx.beginPath();
-            this.ctx.moveTo(x, y - hh);
-            this.ctx.lineTo(x - hh, y);
-            this.ctx.lineTo(x, y + hh);
-            this.ctx.lineTo(x + hh, y);
-            this.ctx.closePath();
-            this.ctx.fill();
         }
 
         hit (points) {

@@ -1,6 +1,7 @@
 <script>
     class RenderedElement {
         constructor(ctx, opts) {
+            this._started = Date.now();
             this.ctx = ctx;
             this.x = opts.x;
             this.y = opts.y;
@@ -8,7 +9,10 @@
         }
 
         update (dt) {
+        }
 
+        get lt () {
+            return Date.now() - this._started;
         }
 
         render () {
@@ -23,6 +27,16 @@
 
         getRect () {
             return { x: this.x, y: this.y, width: 0, height: 0 };
+        }
+    
+        romboid (x, y, hh) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, y - hh);
+            this.ctx.lineTo(x - hh, y);
+            this.ctx.lineTo(x, y + hh);
+            this.ctx.lineTo(x + hh, y);
+            this.ctx.closePath();
+            this.ctx.fill();
         }
 
     }

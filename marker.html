@@ -1,5 +1,7 @@
 <link rel="import" href="./rendered-element.html">
 <script>
+    const MARKER_COL_1 = '#fec85d';
+
     class Marker extends RenderedElement {
         constructor (ctx, opts) {
             super(ctx, opts);
@@ -12,11 +14,55 @@
 
         render () {
             super.render();
-            this.ctx.fillStyle = 'yellow';
-            this.ctx.beginPath();
-            this.ctx.arc(0, 0, 4, 0, 2 * Math.PI);
+
+            let r = 25
+            let s = 8
+
+            this.ctx.fillStyle = MARKER_COL_1;
+            this.romboid(0, 0, r - s);
             this.ctx.fill();
-            this.ctx.closePath();
+
+            this.ctx.lineWidth = 8;
+            this.ctx.lineCap = 'square';
+            this.ctx.lineJoin = 'bevel';
+
+            let multiA = Math.sin(this.lt / 100);
+            let multiB = Math.cos(this.lt / 100);
+            let alphaA = multiA * .5 + .75
+            let alphaB = multiB * .5 + .75
+
+            this.ctx.strokeStyle = `rgba(255, 255, 255, ${ alphaA })`;
+
+            // Top edge
+            this.ctx.beginPath();
+            this.ctx.moveTo(-r / 2, -r / 2 - s);
+            this.ctx.lineTo(0, -r - s);
+            this.ctx.lineTo(r / 2, -r / 2 - s);
+            this.ctx.stroke();
+
+            // Bottom edge
+            this.ctx.beginPath();
+            this.ctx.moveTo(-r / 2, r / 2 + s);
+            this.ctx.lineTo(0, r + s);
+            this.ctx.lineTo(r / 2, r / 2 + s);
+            this.ctx.stroke();
+
+            this.ctx.strokeStyle = `rgba(255, 255, 255, ${ alphaB })`;
+
+            // Left edge
+            this.ctx.beginPath();
+            this.ctx.moveTo(-r / 2 - s, -r / 2);
+            this.ctx.lineTo(-r - s, 0);
+            this.ctx.lineTo(-r / 2 - s, r / 2);
+            this.ctx.stroke();
+
+            // Right edge
+            this.ctx.beginPath();
+            this.ctx.moveTo(r / 2 + s, -r / 2);
+            this.ctx.lineTo(r + s, 0);
+            this.ctx.lineTo(r / 2 + s, r / 2);
+            this.ctx.stroke();
+
             super.afterRender();
         }
     }
