@@ -1,0 +1,59 @@
+html, body {
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    background-color: #242033;
+    transition: background-color 2s;
+    font-family: 'Akkurat';
+    color: #fff;
+}
+
+:focus {
+    outline: 0;
+}
+
+#shell {
+    width: 100vw;
+    height: 100vh;
+}
+
+canvas {
+    transform: scale(0.5, 0.5);
+    transform-origin: 0 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-image: linear-gradient(#492540, #34314c);
+}
+
+.show-role-assist, .show-role-driver {
+    display: none;
+}
+
+body.role-assist .show-role-assist {
+    display: block;
+}
+
+body.role-driver .show-role-driver {
+    display: block;
+}
+
+body.role-driver {
+    background-color: #252235;
+}
+
+body.role-assist {
+    background-color: #252235;
+}
+
+body.role-assist canvas {
+    background-color: #262339;
+}
+
+body.role-assist canvas {
+    left: calc(100vw - 750px);
+}
+
+body.role-assist .role-screen {
+    left: 0;
+}

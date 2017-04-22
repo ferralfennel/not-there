@@ -1,0 +1,42 @@
+.role-screen {
+    position: absolute;
+    position: absolute;
+    left: 750px;
+    width: calc(100vw - 750px);
+    height: 100vh;
+    text-align: center;
+    top: 0;
+    overflow: hidden;
+}
+
+.role-screen .inner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.role-screen img.avatar {
+    margin: auto;
+    width: 120px;
+    margin-bottom: 30px;
+}
+
+.role-screen img.marker {
+    margin: auto;
+    width: 30px;
+}
+
+.role-screen h1 {
+    font-weight: 100;
+    margin-top: 8px;
+    margin-bottom: 0;
+    font-size: 30px;
+}
+
+.role-screen h2 {
+    color: #c5e99b;
+    font-weight: 100;
+    font-size: 25px;
+    margin-top: 0;
+}

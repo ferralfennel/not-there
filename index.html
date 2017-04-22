@@ -5,8 +5,10 @@
         <meta charset="UTF-8">
         <link rel="manifest" href="/manifest.json">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="/css/fonts.css">
-        <link rel="stylesheet" href="/css/main.css">
+        <link rel="stylesheet" href="/style/main.css">
+        <link rel="stylesheet" href="/style/fonts.css">
+        <link rel="stylesheet" href="/style/role-screen.css">
+        <link rel="stylesheet" href="/style/main-menu.css">
         <link rel="import" href="./level.html">
         <link rel="import" href="./keyboard.html">
         <link rel="import" href="./log.html">
@@ -15,17 +17,29 @@
     </head>
     <body>
         <template id="main-menu">
-            <button type="button" id="solo-button">Solo Mode</button>
-            <button type="button" id="drive-button">Drive</button>
-            <button type="button" id="assist-button">Assist</button>
-            <button type="button" id="start-button">Start</button>
+            <div class="main-menu">
+                <div class="drive" data-role="menu-driver">
+                    <h1>Pilot</h1>
+                    <img src="/assets/avatar/driver.svg" alt="">
+                    <button type="button">Drive</button>
+                </div>
+                <div class="assist" data-role="menu-assist">
+                    <h1>Navigator</h1>
+                    <img src="/assets/avatar/assist.svg" alt="">
+                    <button type="button">Assist</button>
+                </div>
+                <div class="alt-buttons">
+                    <button type="button" data-role="game-start-solo">Solo Mode</button>
+                    <button type="button" data-role="game-start">Start</button>
+                </div>
+            </div>
         </template>
         <template id="game">
             <canvas id="canvas"></canvas>
         </template>
         <template id="role-screen">
             <div class="role-screen">
-                <div class='inner'>
+                <div class="inner">
                     <img class="avatar show-role-driver" src="/assets/avatar/driver.svg" />
                     <img class="marker show-role-driver" src="/assets/marker/driver.svg" />
                     <img class="avatar show-role-assist" src="/assets/avatar/assist.svg" />
@@ -101,7 +115,6 @@
 
                     while (score.length < 2) { score = `0${ score }`; }
 
-                    console.log(score)
                     if (score !== this.score) {
                         for (let el of document.querySelectorAll('[data-role="score"]')) {
                             el.innerHTML = score;
@@ -125,10 +138,10 @@
                     super.show();
                     this.ready = {};
                     this.buttons = {
-                        driver: this.shell.querySelector('#drive-button'),
-                        assist: this.shell.querySelector('#assist-button'),
-                        start: this.shell.querySelector('#start-button'),
-                        solo: this.shell.querySelector('#solo-button')
+                        driver: this.shell.querySelector('[data-role="menu-driver"]'),
+                        assist: this.shell.querySelector('[data-role="menu-assist"]'),
+                        start: this.shell.querySelector('[data-role="game-start"]'),
+                        solo: this.shell.querySelector('[data-role="game-start-solo"]')
                     };
                     this.buttons.driver.addEventListener('click', () => {
                         this.chooseRole('driver');

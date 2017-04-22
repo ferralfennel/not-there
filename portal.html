@@ -42,6 +42,8 @@
         collisionCallback (other) {
             if (other instanceof Player && this.boundTo) {
                 other.moveTo(this.boundTo.x, this.boundTo.y);
+                this.destroy();
+                this.boundTo.destroy();
             }
         }
 
@@ -49,6 +51,9 @@
             if (!this.destroyed) {
                 this.destroyed = true;
                 this.explosion.generate();
+                if (Socket.isDriver) {
+                    Socket.send('portal-destroyed', { type: this.type });
+                }
             }
         }
 

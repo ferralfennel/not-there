@@ -1,0 +1,95 @@
+.main-menu {
+    display: flex;
+    height: 100%;
+    cursor: pointer;
+}
+
+.main-menu>div {
+    color: white;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-menu img {
+    width: 200px;
+    height: 200px;
+    transition: transform .2s, margin .2s;
+}
+
+.main-menu h1 {
+    font-weight: 100;
+    margin-bottom: 15px;
+}
+
+.main-menu>div button {
+    font-weight: 100;
+    margin-top: 15px;
+}
+
+.main-menu>div:hover img {
+    transform: scale(1.2);
+    margin: 30px auto;
+}
+
+.main-menu button[disabled] {
+    opacity: 1;
+    color: rgba(255, 255, 255, .3);
+    background: #1a1521;
+}
+
+.main-menu button {
+    border-radius: 0px;
+    height: 40px;
+    min-width: 120px;
+    width: 120px;
+    border: 0px;
+    position: relative;
+    padding: none;
+    z-index: 2;
+    margin-top: 12px;
+    background: #73F7DD;
+    font-size: 16px;
+    color: rgba(0, 0, 0, .6);
+    cursor: pointer;
+    /*font-weight: 100;*/
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+.main-menu button::before, .main-menu button::after {
+    z-index: -1;
+    position: absolute;
+    content: ' ';
+    width: 28px;
+    height: 28px;
+    background: inherit;
+    transform: rotate(45deg);
+    top: 6px;
+}
+
+.main-menu button::before {
+    left: -14px;
+}
+
+.main-menu button::after {
+    right: -14px;
+}
+
+.main-menu .assist {
+    background: #492540;
+}
+
+.main-menu .assist button {
+    background: #FFC952;
+}
+
+.main-menu .alt-buttons {
+    position :absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%);
+    /*margin-top: 200px;*/
+}
