@@ -72,7 +72,7 @@
                 } else {
                     if (!Socket.isDriver) {
                         Socket.send('place-portal', { x, y: e.y });
-                        this.placePortal(e.x, e.y);
+                        this.placePortal(x, e.y);
                     }
                 }
             });
