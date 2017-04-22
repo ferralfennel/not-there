@@ -21,12 +21,12 @@
     const STARTING_ANIM_MS = 1000;
     const GENERATE_PADDING = 200
     const SECTIONS_INDEX = [
-        { constr: SectionPaddles, likelihood: 4 },
         { constr: SectionAsteroidSingle, likelihood: 2 },
         { constr: SectionAsteroidsMulti, likelihood: 1 },
         { constr: SectionAsteroidBelt, likelihood: 1 },
         { constr: SectionAsteroidWall, likelihood: 1 },
         { constr: SectionCollectable, likelihood: 2 },
+        { constr: SectionPaddles, likelihood: 4 },
         { constr: SectionEnemy, likelihood: 3 }
     ]
 
@@ -204,10 +204,8 @@
 
             if (!this.frozen) { this.score += d / 500; }
 
-            Logger.log("Player y: " + this.player.y);
-            Logger.log("Player limit: " + this.playerLimit);
-
             this.offset += d;
+            this.scene.offset = this.offset;
 
             if (!this.frozen) {
                 this.sections.forEach(section => {
