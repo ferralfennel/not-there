@@ -2,7 +2,8 @@
 <link rel="import" href="./rendered-element.html">
 <link rel="import" href="./world.html">
 <script>
-    const BG_COLOR = '#47273f';
+    const BG_COLOR_START = '#34314b';
+    const BG_COLOR_END = '#442842';
 
     class Scene extends RenderedElement {
         constructor (ctx, opts={}) {
@@ -46,8 +47,16 @@
 
         render () {
             super.render();
-            this.ctx.fillStyle = BG_COLOR;
+
+            let bgGrad = this.ctx.createLinearGradient(0, this.height, 0, 0);
+
+            bgGrad.addColorStop(0, BG_COLOR_START);
+            bgGrad.addColorStop(1, BG_COLOR_END);
+
+            this.ctx.fillStyle = bgGrad;
+
             this.ctx.fillRect(0, 0, this.width, this.height);
+
             this.elements.forEach(el => el.render());
             super.afterRender();
             // this.renderBodies()
