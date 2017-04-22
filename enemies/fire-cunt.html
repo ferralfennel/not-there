@@ -10,6 +10,7 @@
             this.rotationDir = this.chance.random() > .5 ? 1 : -1;
             this.rotationSpeed = this.chance.random() / 500 * this.rotationDir;
             this.world = scene.world;
+            this.scene = scene;
 
             this.dartBodies = [];
 
@@ -33,15 +34,14 @@
 
             this.d = 30;
             this.rotation = 0;
-            this.started = Date.now();
-            this.willFireIn = this.chance.random() * 3000 + 1000;
+            this.willFireIn = this.chance.random() * 2000 + 200;
         }
 
         update (dt) {
             let deltaRot = this.rotationSpeed * dt,
                 deltaD = 0.9 * dt;
             this.rotation += deltaRot;
-            if (Date.now() - this.started >= this.willFireIn) {
+            if (this.triggered && Date.now() - this.triggered >= this.willFireIn) {
                 this.fire();
             }
             if (this.firing) {
@@ -53,11 +53,21 @@
                 body.x = this.body.x + Math.cos(r) * (this.d + 20);
                 body.y = this.body.y + Math.sin(r) * (this.d + 20);
             });
+            Logger.log(Math.abs(this.scene.player.y - this.body.y));
+            if (Math.abs(this.scene.player.y - this.body.y) < 1000) {
+                this.trigger();
+            }
         }
 
         collisionCallback (other) {
             if (other instanceof Player) {
                 other.hit(3);
+            }
+        }
+
+        trigger () {
+            if (!this.triggered) {
+                this.triggered = Date.now();
             }
         }
 
