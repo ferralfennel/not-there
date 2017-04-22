@@ -1,0 +1,129 @@
+<link rel="import" href="./entity.html">
+<link rel="import" href="./particle-generator.html">
+<script>
+    const PORTAL_WIDTH = 140;
+    const PORTAL_COLOR = '#79F6DD';
+
+    class Portal extends Entity {
+        constructor (scene, opts) {
+            super(scene.ctx, opts);
+
+            this.world = scene.world;
+
+            if (opts.type === 'entry') {
+                this.body = this.world.add(null, {
+                    type: 'rect',
+                    x: opts.x - PORTAL_WIDTH / 2,
+                    y: opts.y,
+                    width: PORTAL_WIDTH,
+                    height: 20,
+                    data: this
+                });
+            }
+
+            this.type = opts.type;
+            this.explosion = new ParticleGenerator({
+                decay: 0.1,
+                maxSize: 5,
+                scale: 5,
+                gravity: 0.1,
+                dataGenerator: () => {
+                    return {
+                        color: Math.random() < 0.5 ? 'white' : PORTAL_COLOR
+                    };
+                }
+            });
+        }
+
+        setBoundPortal (portal) {
+            this.boundTo = portal;
+        }
+
+        collisionCallback (other) {
+            if (other instanceof Player && this.boundTo) {
+                other.moveTo(this.boundTo.x, this.boundTo.y);
+            }
+        }
+
+        destroy () {
+            if (!this.destroyed) {
+                this.destroyed = true;
+                this.explosion.generate();
+            }
+        }
+
+        update (dt) {
+            if (this.destroyed) {
+                this.explosion.tick(dt);
+            }
+        }
+
+        render () {
+            super.render();
+
+            if (!this.destroyed) {
+
+                if (this.type === 'exit') {
+                    this.ctx.rotate(180 * Math.PI / 180);
+                }
+
+                this.ctx.fillStyle = 'white';
+                this.ctx.lineWidth = 5;
+                this.ctx.strokeStyle = PORTAL_COLOR;
+                this.ctx.lineCap = 'square';
+
+                this.ctx.save();
+                this.ctx.translate(-PORTAL_WIDTH / 2, 0);
+                this.ctx.fillRect(0, 0, PORTAL_WIDTH, 6);
+                this.ctx.restore();
+
+                this.ctx.save();
+                this.ctx.translate(-PORTAL_WIDTH / 3, 20);
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, 0)
+                this.ctx.lineTo(0, -8);
+                this.ctx.lineTo(PORTAL_WIDTH * 2 / 3, -8);
+                this.ctx.lineTo(PORTAL_WIDTH * 2 / 3, 0);
+                this.ctx.stroke();
+                this.ctx.restore();
+
+                this.ctx.save();
+                this.ctx.fillStyle = PORTAL_COLOR;
+                this.ctx.globalAlpha = 0.5;
+                this.ctx.translate(-PORTAL_WIDTH / 3 + 6, 19);
+                this.ctx.fillRect(0, 0, PORTAL_WIDTH * 2 / 3 - 12, 3);
+                this.ctx.restore();
+
+                let bitSize = ((PORTAL_WIDTH * 2 / 3) - 49) / 4
+
+                this.ctx.save();
+                this.ctx.fillStyle = PORTAL_COLOR;
+                this.ctx.globalAlpha = 0.5;
+                this.ctx.translate(-PORTAL_WIDTH / 2 + bitSize, 9);
+                this.ctx.fillRect(0, 0, bitSize, 4);
+                this.ctx.restore();
+
+                this.ctx.save();
+                this.ctx.fillStyle = PORTAL_COLOR;
+                this.ctx.globalAlpha = 0.5;
+                this.ctx.translate(PORTAL_WIDTH / 2 - bitSize * 2, 9);
+                this.ctx.fillRect(0, 0, bitSize, 4);
+                this.ctx.restore();
+
+            } else {
+                this.explosion.particles.forEach(p => {
+                    this.ctx.save();
+                    this.ctx.fillStyle = p.data.color;
+                    this.ctx.translate(p.x, p.y);
+                    this.ctx.scale(p.scale, p.scale);
+                    this.ctx.rotate(45 * Math.PI / 180);
+                    this.ctx.fillRect(0, 0, 4, 4);
+                    this.ctx.restore();
+                });
+            }
+
+            super.afterRender();
+        }
+
+    }
+</script>

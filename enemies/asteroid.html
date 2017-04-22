@@ -48,6 +48,10 @@ const ASSETS_COUNT = 4
                 other.hit(1);
                 this.explode();
                 this.world.remove(this.body.id);
+            } else if (other instanceof Portal) {
+                other.destroy();
+                this.explode();
+                this.world.remove(this.body.id);
             }
         }
 
