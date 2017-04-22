@@ -31,7 +31,12 @@
                 decay: 0.1,
                 maxSize: 5,
                 scale: 5,
-                gravity: 0.1
+                gravity: 0.1,
+                dataGenerator: () => {
+                    return {
+                        color: Math.random() < 0.5 ? 'white' : 'rgba(121, 246, 221, 1)'
+                    };
+                }
             });
             this.life = 3;
             this.xHistory = [0, 0];
@@ -238,11 +243,11 @@
             } else {
                 this.particleGenerator.particles.forEach(p => {
                     this.ctx.save();
-                    this.ctx.fillStyle = 'white';
+                    this.ctx.fillStyle = p.data.color;
                     this.ctx.translate(p.x, p.y);
                     this.ctx.scale(p.scale, p.scale);
                     this.ctx.rotate(45 * Math.PI / 180);
-                    this.ctx.fillRect(0, 0, 10, 10);
+                    this.ctx.fillRect(0, 0, 5, 5);
                     this.ctx.restore();
                 });
             }

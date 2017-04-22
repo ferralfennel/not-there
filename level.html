@@ -9,14 +9,15 @@
 <link rel="import" href="./marker.html">
 <link rel="import" href="./socket-manager.html">
 <link rel="import" href="./mouse-manager.html">
+<link rel="import" href="./portal.html">
 <script>
     const STARTING_ANIM_MS = 1000;
     const GENERATE_PADDING = 200
     const SECTIONS_INDEX = [
-        { constr: SectionPaddles, likelyhood: 1 },
+        //{ constr: SectionPaddles, likelyhood: 1 },
         { constr: SectionAsteroidSingle, likelyhood: 1 },
-        { constr: SectionAsteroidsMulti, likelyhood: 1 },
-        { constr: SectionAsteroidBelt, likelyhood: 1 },
+        //{ constr: SectionAsteroidsMulti, likelyhood: 1 },
+        //{ constr: SectionAsteroidBelt, likelyhood: 1 },
     ]
 
     class Level {
@@ -29,9 +30,13 @@
             });
             let rect = this.player.getRect();
             this.player.move(0, rect.height);
+            this.playerLimit = this.scene.height - 200;
             this.offset = 0;
             this.sections = [];
             this.markers = [];
+
+            this.entryPortal = null;
+            this.exitPortal = null;
 
             Socket.on('add-marker', (e) => {
                 this.addMarker(e.x, e.y);
@@ -48,11 +53,34 @@
             }
 
             Mouse.onDown((e) => {
-                Socket.send('add-marker', { x: e.x, y: e.y });
-                this.addMarker(e.x, e.y);
+                if (!e.rightClick) {
+                    Socket.send('add-marker', { x: e.x, y: e.y });
+                    this.addMarker(e.x, e.y);
+                } else {
+                    Socket.send('place-portal', { x: e.x, y: e.y });
+                    this.placePortal(e.x, e.y);
+                }
             });
 
             Sound.load('noise' ,'/assets/sounds/noise.wav');
+        }
+
+        placePortal (x, y) {
+            if (!this.entryPortal) {
+                this.entryPortal = new Portal(this.scene, { x, y, type: 'entry' });
+                this.scene.addElement(this.entryPortal);
+            } else if (!this.exitPortal) {
+                this.exitPortal = new Portal(this.scene, { x, y, type: 'exit' });
+                this.exitPortal.setBoundPortal(this.entryPortal);
+                this.entryPortal.setBoundPortal(this.exitPortal);
+                this.scene.addElement(this.exitPortal);
+            } else {
+                this.scene.removeElement(this.entryPortal);
+                this.scene.removeElement(this.exitPortal);
+                this.entryPortal = null;
+                this.exitPortal = null;
+                this.placePortal(x, y);
+            }
         }
 
         addMarker (x, y) {
@@ -100,6 +128,9 @@
                 }
             }
 
+            Logger.log("Player y: " + this.player.y);
+            Logger.log("Player limit: " + this.playerLimit);
+
             // Slow down if the player has been hit
             let d = (this.player.hitDelay ? 0.2 : 0.4) * dt;
             this.offset += d;
@@ -113,6 +144,18 @@
                     marker.move(0, d);
                 });
 
+                if (this.entryPortal) {
+                    this.entryPortal.move(0, d);
+                }
+
+                if (this.exitPortal) {
+                    this.exitPortal.move(0, d);
+                }
+
+                if (this.player.y < this.playerLimit) {
+                    this.player.move(0, d);
+                }
+
             }
             this.scene.update(dt);
             collisions = this.scene.world.getCollisions('player');
@@ -122,6 +165,16 @@
                     col.data.collisionCallback(this.player);
                 }
             });
+
+            if (this.entryPortal) {
+                collisions = this.scene.world.getCollisions(this.entryPortal.body.id);
+                collisions.forEach(col => {
+                console.log('hit');
+                if (col.data && col.data.collisionCallback) {
+                    col.data.collisionCallback(this.entryPortal);
+                }
+            });
+            }
 
             if (this.player.dead) {
                 this.freeze();

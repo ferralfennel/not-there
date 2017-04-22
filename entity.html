@@ -13,8 +13,11 @@
             this.x = x;
             this.y = y;
 
-            this.body.x += diff.x;
-            this.body.y += diff.y;
+            if (this.body) {
+                this.body.x += diff.x;
+                this.body.y += diff.y;
+            }
+
         }
 
         move (x = 0, y = 0) {
