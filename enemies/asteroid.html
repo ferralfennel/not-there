@@ -1,5 +1,6 @@
 <link rel="import" href="../entity.html">
 <link rel="import" href="../socket-manager.html">
+<link rel="import" href="../image-manager.html">
 <script>
 const ASSETS_COUNT = 4
     class Asteroid extends Entity {
@@ -11,8 +12,6 @@ const ASSETS_COUNT = 4
             this.rotationSpeed = Math.random() / 500 * this.rotationDir;
             this.speed = Math.random() / 5 * this.dir
             this.assetIndex = Math.floor(Math.random() * (ASSETS_COUNT - 1)) + 1;
-            this.image = new Image();
-            this.image.src = `/assets/asteroid/0${ this.assetIndex }@2x.png`;
             this.size = size;
             this.world = scene.world;
             this.body = this.world.add(null, {
@@ -23,6 +22,12 @@ const ASSETS_COUNT = 4
                 a: this.a,
                 data: this
             });
+
+            this.load();
+        }
+
+        load () {
+            this.image = Images.loadImage(`asteroid-${this.assetIndex}`, `/assets/asteroid/0${ this.assetIndex }@2x.png`);
         }
 
         update(dt) {

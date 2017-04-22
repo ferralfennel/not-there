@@ -1,0 +1,24 @@
+<script>
+    class ImageManager {
+
+        constructor () {
+            this.images = {};
+        }
+
+        getImage (id) {
+            return this.images[id];
+        }
+
+        loadImage (id, path) {
+            if (this.images[id]) {
+                return this.getImage(id);
+            }
+            let img = new Image();
+            img.src = path;
+            this.images[id] = img;
+            return img;
+        }
+
+    }  
+    window.Images = new ImageManager();
+</script>

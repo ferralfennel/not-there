@@ -1,4 +1,5 @@
 <link rel="import" href="./entity.html">
+<link rel="import" href="./particle-generator.html">
 <script>
     class Player extends Entity {
         constructor(scene, opts) {
@@ -15,6 +16,10 @@
             this.velX = 0;
             this.accel = 0.1;
             this.friction = 0.5;
+            this.particleGenerator = new ParticleGenerator({
+                decay: 0.1,
+                maxSize: 3
+            });
         }
 
         update (dt) {
@@ -37,17 +42,41 @@
                 }
             }
 
-            this.move(this.velX * dt);
+            if (this.dead) {
+                this.particleGenerator.tick(dt);
+            } else {
+                this.move(this.velX * dt);
+            }
+
         }
 
         render () {
             super.render();
-            this.ctx.fillStyle = 'white';
-            this.ctx.beginPath();
-            this.ctx.arc(0, 0, 10, 0, 2 * Math.PI);
-            this.ctx.fill();
-            this.ctx.closePath();
+            if (!this.dead) {
+                this.ctx.fillStyle = 'white';
+                this.ctx.beginPath();
+                this.ctx.arc(0, 0, 10, 0, 2 * Math.PI);
+                this.ctx.fill();
+                this.ctx.closePath();
+            } else {
+                this.particleGenerator.particles.forEach(p => {
+                    this.ctx.save();
+                    this.ctx.fillStyle = 'white';
+                    this.ctx.translate(p.x, p.y);
+                    this.ctx.scale(p.scale, p.scale);
+                    this.ctx.fillRect(0, 0, 10, 10);
+                    this.ctx.restore();
+                });
+            }
+            
             super.afterRender();
+        }
+
+        die () {
+            if (!this.dead) {
+                this.dead = true;
+                this.particleGenerator.generate();
+            }
         }
 
         dispose () {

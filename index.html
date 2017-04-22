@@ -28,6 +28,7 @@
     </head>
     <body>
         <template id="main-menu">
+            <button type="button" id="solo-button">Solo Mode</button>
             <button type="button" id="drive-button">Drive</button>
             <button type="button" id="assist-button">Assist</button>
             <button type="button" id="start-button">Start</button>
@@ -95,7 +96,8 @@
                     this.buttons = {
                         driver: this.shell.querySelector('#drive-button'),
                         assist: this.shell.querySelector('#assist-button'),
-                        start: this.shell.querySelector('#start-button')
+                        start: this.shell.querySelector('#start-button'),
+                        solo: this.shell.querySelector('#solo-button')
                     };
                     this.buttons.driver.addEventListener('click', () => {
                         this.chooseRole('driver');
@@ -106,9 +108,15 @@
                     this.buttons.start.addEventListener('click', () => {
                         Socket.ready();
                     });
+                    this.buttons.solo.addEventListener('click', () => {
+                        Socket.isDriver = true;
+                        Socket.role = 'driver';
+                        this.start();
+                    });
                     this.buttons.driver.setAttribute('disabled', true);
                     this.buttons.assist.setAttribute('disabled', true);
                     this.buttons.start.setAttribute('disabled', true);
+                    this.buttons.solo.setAttribute('disabled', true);
                     Socket.connect().then((data) => {
                         ['driver', 'assist'].forEach(role => {
                             if (data.rolesTaken.indexOf(role) === -1) {
@@ -126,6 +134,8 @@
                         Socket.socket.on('start', (role) => {
                             this.start();
                         });
+                    }).catch(e => {
+                        this.buttons.solo.removeAttribute('disabled');
                     });
                     this.shell.animate({
                         opacity: [0, 1]

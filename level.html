@@ -100,17 +100,27 @@
 
             let d = 0.4 * dt;
             this.offset += d;
-            this.sections.forEach(section => {
-                section.move(0, d);
-            });
-            this.markers.forEach(marker => {
-                marker.move(0, d);
-            });
-            this.scene.update(dt);
+            if (!this.frozen) {
+                this.sections.forEach(section => {
+                    section.move(0, d);
+                });
+                this.markers.forEach(marker => {
+                    marker.move(0, d);
+                });
+                this.scene.update(dt);
+            } else {
+                this.player.update(dt);
+            }
             collisions = this.scene.world.getCollisions('player');
             collisions.forEach(col => {
-                console.log('HIT')
+                console.log('HIT');
+                this.player.die();
+                this.freeze();
             });
+        }
+
+        freeze () {
+            this.frozen = true;
         }
 
         generateSection(y, height) {
