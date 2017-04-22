@@ -1,0 +1,15 @@
+<link rel="import" href="./section.html">
+<link rel="import" href="../enemies/asteroid-belt.html">
+<link rel="import" href="../enemies/grid.html">
+<script>
+    class SectionAsteroidWall extends Section {
+        constructor(scene, opts) {
+            super(scene, opts, 1000);
+            this.elements = [
+                new Grid(scene, 0, 0, { height: 300 }),
+                new AsteroidBelt(scene, 0, 100, { height: 100 }),
+                new AsteroidBelt(scene, 0, -50, { height: 100 })
+            ];
+        }
+    }
+</script>

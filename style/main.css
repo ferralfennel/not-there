@@ -71,3 +71,41 @@ body.role-assist .role-screen {
     align-items: center;
     justify-content: center;
 }
+
+button {
+    border-radius: 0px;
+    height: 40px;
+    min-width: 120px;
+    width: 120px;
+    border: 0px;
+    position: relative;
+    padding: none;
+    z-index: 2;
+    margin-top: 12px;
+    background: #73F7DD;
+    font-size: 16px;
+    color: rgba(0, 0, 0, .6);
+    cursor: pointer;
+    /*font-weight: 100;*/
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+button::before, button::after {
+    z-index: -1;
+    position: absolute;
+    content: ' ';
+    width: 28px;
+    height: 28px;
+    background: inherit;
+    transform: rotate(45deg);
+    top: 6px;
+}
+
+button::before {
+    left: -14px;
+}
+
+button::after {
+    right: -14px;
+}

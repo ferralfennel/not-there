@@ -37,6 +37,11 @@
 }
 .main-menu>div.not-selected{
     transform: translateX(50%);
+    pointer-events: none;
+    filter: grayscale() blur(3px);
+}
+.blur {
+    filter: blur(3px);
 }
 .main-menu>div.selected {
     transform: scale(1.5);

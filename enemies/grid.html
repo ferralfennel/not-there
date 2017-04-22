@@ -1,0 +1,79 @@
+<script>
+
+    const GRID_COLOR = '#e6565b';
+
+    class Grid extends Entity {
+        constructor(scene, x, y, opts) {
+            super(scene.ctx, { x, y });
+            this.opts = Object.assign({ height: 20 }, opts);
+            this.height = this.opts.height;
+            this.scene = scene;
+            this.world = scene.world;
+            this.body = this.world.add(null, {
+                type: 'rect',
+                x: this.x,
+                y: this.y,
+                width: scene.width,
+                height: this.height,
+                data: this
+            });
+        }
+
+        collisionCallback (other) {
+            if (other instanceof Player) {
+                other.hit(3);
+            }
+        }
+
+        render () {
+            super.render();
+
+            this.ctx.strokeStyle = GRID_COLOR;
+
+            this.ctx.lineWidth = 2;
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, 0);
+            this.ctx.lineTo(this.scene.width, 0);
+            this.ctx.stroke();
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, this.height);
+            this.ctx.lineTo(this.scene.width, this.height);
+            this.ctx.stroke();
+
+            this.ctx.lineWidth = 1;
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, 20);
+            this.ctx.lineTo(this.scene.width, 20);
+            this.ctx.stroke();
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, this.height - 20);
+            this.ctx.lineTo(this.scene.width, this.height - 20);
+            this.ctx.stroke();
+
+            this.ctx.setLineDash([6, 6]);
+
+            let cursorX = -this.height;
+
+            while (cursorX < this.scene.width) {
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(cursorX, 20);
+                this.ctx.lineTo(cursorX + this.height - 20, this.height - 20);
+                this.ctx.stroke();
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(cursorX, this.height - 20);
+                this.ctx.lineTo(cursorX + this.height - 20, 20);
+                this.ctx.stroke();
+
+                cursorX += 40;
+            }
+
+            super.afterRender();
+        }
+    }
+</script>

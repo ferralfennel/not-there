@@ -202,6 +202,7 @@
 
                         Socket.socket.on('all-ready', () => {
                             this.els.start.removeAttribute('disabled');
+                            this.els.start.innerText = 'Start';
                         });
 
                         Socket.socket.on('start', (role) => {
@@ -237,6 +238,8 @@
                         this.els.assist.setAttribute('disabled', true);
                         this.els[role].classList.add('selected');
                         this.els[notSelected].classList.add('not-selected');
+                        this.els.start.innerText = 'Waiting...';
+                        this.els.solo.classList.add('blur');
                         Sound.play('validate');
                         for (let i = 0; i < this.options.length; i++) {
                             this.options[i].removeEventListener('mouseenter', this.optionCallbacks[i]);

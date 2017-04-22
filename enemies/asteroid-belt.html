@@ -4,11 +4,13 @@
 <link rel="import" href="../body-group.html">
 <script>
     class AsteroidBelt extends Entity {
-        constructor(scene, x, y, seed, density = 4) {
+        constructor(scene, x, y, opts) {
             super(scene.ctx, { x, y });
-            this.seed = seed;
+            this.opts = Object.assign({
+                height: 200
+            }, opts);
             this.chance = new Chance(String(seed));
-            this.density = density;
+            this.height = this.opts.height;
             this.world = scene.world;
 
             this.asteroids = [];
@@ -20,8 +22,8 @@
             while (cursorX < scene.width + 50) {
                 size = this.sizes[Math.floor(this.chance.random() * this.sizes.length)];
 
-                if (cursorY > this.chance.random() * 200 + 100) {
-                    cursorY = this.chance.random() * 200;
+                if (cursorY > this.chance.random() * this.height + 100) {
+                    cursorY = this.chance.random() * this.height;
                     cursorX += this.chance.random() * size * 2;
                 }
 
@@ -37,6 +39,8 @@
             }
 
             this.body = new BodyGroup(this.asteroids.map(a => a.body));
+            this.body.x = x;
+            this.body.y = y;
         }
 
         collisionCallback (other) {
