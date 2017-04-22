@@ -62,10 +62,10 @@
                 now = Date.now();
 
             if (!this.dead && Socket.isDriver) {
-                if (Keyboard.isDown(37)) {
+                if (Keyboard.isDown(37) || Keyboard.isDown(65)) {
                     this.velX = Math.max(this.velX - this.accel, -2);
                     moving = true;
-                } else if (Keyboard.isDown(39)) {
+                } else if (Keyboard.isDown(39) || Keyboard.isDown(68)) {
                     this.velX = Math.min(this.velX + this.accel, 2);
                     moving = true;
                 }
@@ -281,6 +281,7 @@
             if (!this.dead) {
                 this.dead = true;
                 this.particleGenerator.generate();
+                this.emit('die');
             }
         }
 

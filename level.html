@@ -21,8 +21,8 @@
     ]
 
     class Level {
-        constructor (ctx, json) {
-            this.descriptor = json;
+        constructor (ctx, options = {}) {
+            this.solo = options.solo || false;
             this.scene = new Scene(ctx);
             this.player = new Player(this.scene, {
                 x: this.scene.width / 2,
@@ -38,6 +38,8 @@
 
             this.entryPortal = null;
             this.exitPortal = null;
+
+            this.player.on('die', this.fail.bind(this));
 
             Socket.on('add-marker', (e) => {
                 this.addMarker(e.x, e.y, e.role);
@@ -75,7 +77,8 @@
                     Socket.send('add-marker', { x, y, role });
                     this.addMarker(x, y, role);
                 } else {
-                    if (!Socket.isDriver) {
+                    // foo
+                    if (!Socket.isDriver || this.solo) {
                         Socket.send('place-portal', { x, y });
                         this.placePortal(x, y);
                     }
