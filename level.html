@@ -108,15 +108,19 @@
                     marker.move(0, d);
                 });
                 this.scene.update(dt);
+                collisions = this.scene.world.getCollisions('player');
+                collisions.forEach(col => {
+                    console.log('hit');
+                    if (col.data && col.data.collisionCallback) {
+                        col.data.collisionCallback(this.player);
+                    }
+                });
+                if (this.player.dead) {
+                    this.freeze();
+                }
             } else {
                 this.player.update(dt);
             }
-            collisions = this.scene.world.getCollisions('player');
-            collisions.forEach(col => {
-                console.log('HIT');
-                this.player.die();
-                this.freeze();
-            });
         }
 
         freeze () {

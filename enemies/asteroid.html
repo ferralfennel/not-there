@@ -30,6 +30,12 @@ const ASSETS_COUNT = 4
             this.image = Images.loadImage(`asteroid-${this.assetIndex}`, `/assets/asteroid/0${ this.assetIndex }@2x.png`);
         }
 
+        collisionCallback (other) {
+            if (other instanceof Player) {
+                other.hit(1);
+            }
+        }
+
         update(dt) {
             this.a += this.rotationSpeed * dt;
             this.move(this.speed * dt, 0);

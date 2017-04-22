@@ -1,6 +1,9 @@
 <link rel="import" href="./entity.html">
 <link rel="import" href="./particle-generator.html">
 <script>
+
+    const HIT_DELAY = 700;
+
     class Player extends Entity {
         constructor(scene, opts) {
             super(scene.ctx, opts);
@@ -20,10 +23,12 @@
                 decay: 0.1,
                 maxSize: 3
             });
+            this.life = 3;
         }
 
         update (dt) {
-            let moving = false;
+            let moving = false,
+                now = Date.now();
 
             if (Keyboard.isDown(37)) {
                 this.velX = Math.max(this.velX - this.accel, -2);
@@ -45,6 +50,9 @@
             if (this.dead) {
                 this.particleGenerator.tick(dt);
             } else {
+                if (this.hitDelay && now - this.hitDelay > HIT_DELAY) {
+                    this.hitDelay = null;
+                }
                 this.move(this.velX * dt);
             }
 
@@ -53,7 +61,17 @@
         render () {
             super.render();
             if (!this.dead) {
+                if (this.hitDelay) {
+                    this.ctx.globalAlpha = Math.random() < 0.5 ? 0.6 : 0.8;
+                }
                 this.ctx.fillStyle = 'white';
+                this.ctx.strokeStyle = 'white';
+                // Shield
+                if (this.life === 3) {
+                    this.ctx.beginPath();
+                    this.ctx.arc(0, 0, 12, 0, 2 * Math.PI);
+                    this.ctx.stroke();
+                }
                 this.ctx.beginPath();
                 this.ctx.arc(0, 0, 10, 0, 2 * Math.PI);
                 this.ctx.fill();
@@ -70,6 +88,19 @@
             }
             
             super.afterRender();
+        }
+
+        hit (points) {
+            let now = Date.now();
+            if (this.hitDelay) {
+                return;
+            }
+            this.life = Math.max(0, this.life - points);
+            if (this.life <= 0) {
+                this.die();
+            } else {
+                this.hitDelay = now;
+            }
         }
 
         die () {
