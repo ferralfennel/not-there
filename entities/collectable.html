@@ -6,6 +6,8 @@
     const INNER_RADIUS = 30;
     const COLLECT_ANIM_MS = 150;
 
+    Sound.load('collect-good', '/assets/sounds/collect-good_0.wav');
+
     class Collectable extends Entity {
         constructor(scene, x, y, itemId) {
             super(scene.ctx, { x, y });
@@ -67,6 +69,8 @@
                 if (this.collected || this.itemId === 'shield' && other.life >= 3) { return; }
 
                 this.collected = Date.now();
+
+                Sound.play('collect-good');
 
                 if (this.itemId === 'shield') {
                   other.life = 3;
