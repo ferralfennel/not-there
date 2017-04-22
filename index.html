@@ -222,7 +222,7 @@
                     Socket.role = 'driver';
                     document.body.className += ' role-driver';
                     // document.body.className += ' role-assist';
-                    this.start();
+                    this.start(true);
                 }
 
                 chooseRole (role) {
@@ -247,7 +247,7 @@
                     this._onStart = cb;
                 }
 
-                start () {
+                start (solo = false) {
 
                     this.shell.animate({
                         opacity: [1, 0]
@@ -255,14 +255,15 @@
                         duration: 500,
                         easing: 'ease-out'
                     }).onfinish = () => {
-                        this._onStart();
+                        this._onStart(solo);
                     };
                 }
             }
 
             class Game extends View {
-                constructor () {
+                constructor (solo = false) {
                     super('game');
+                    this.solo = solo;
                     this.lastTs = 0;
                 }
 
@@ -280,7 +281,7 @@
                     this.resize();
                     Mouse.grab(window);
                     this.ctx = this.canvas.getContext('2d');
-                    this.level = new Level(this.ctx, {});
+                    this.level = new Level(this.ctx, { solo: this.solo });
 
                     Keyboard.grab(window);
                     Logger.setContext(this.ctx);
@@ -343,9 +344,14 @@
 
             let mainMenu = new MainMenu();
 
-            mainMenu.onStart(() => {
-                let game = new Game();
+            mainMenu.onStart(solo => {
+                let game = new Game(solo);
                 game.show();
+<<<<<<< HEAD
+=======
+                new RoleScreen(this.shell, game);
+                new FailureScreen(this.shell, game);
+>>>>>>> 443abb29c7da326c3a58af1fbc27585f1746c339
             });
 
             mainMenu.show();

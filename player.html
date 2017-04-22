@@ -62,10 +62,10 @@
                 now = Date.now();
 
             if (!this.dead && Socket.isDriver) {
-                if (Keyboard.isDown(37)) {
+                if (Keyboard.isDown(37) || Keyboard.isDown(65)) {
                     this.velX = Math.max(this.velX - this.accel, -2);
                     moving = true;
-                } else if (Keyboard.isDown(39)) {
+                } else if (Keyboard.isDown(39) || Keyboard.isDown(68)) {
                     this.velX = Math.min(this.velX + this.accel, 2);
                     moving = true;
                 }
@@ -78,6 +78,12 @@
                 if (this.velX > 0) {
                     this.velX = Math.max(this.velX - this.friction, 0);
                 }
+            }
+
+            if (this.x > this.scene.width && this.velX > 0) {
+                this.velX *= -1;
+            } else if (this.x < 0 && this.velX < 0) {
+                this.velX *= -1;
             }
 
             if (this.dead) {
@@ -281,6 +287,7 @@
             if (!this.dead) {
                 this.dead = true;
                 this.particleGenerator.generate();
+                this.emit('die');
             }
         }
 

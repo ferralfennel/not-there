@@ -1,6 +1,9 @@
+<link rel="import" href="./util/event-emitter.html">
 <script>
-    class RenderedElement {
+    class RenderedElement extends EventEmitter {
+
         constructor(ctx, opts) {
+            super();
             this._started = Date.now();
             this.ctx = ctx;
             this.x = opts.x;
