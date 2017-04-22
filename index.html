@@ -91,6 +91,10 @@
                 }
 
                 show () {
+                    if (location.search.indexOf('mode=solo') !== -1) {
+                        this.playSolo();
+                    }
+
                     super.show();
                     this.ready = {};
                     this.buttons = {
@@ -108,11 +112,7 @@
                     this.buttons.start.addEventListener('click', () => {
                         Socket.ready();
                     });
-                    this.buttons.solo.addEventListener('click', () => {
-                        Socket.isDriver = true;
-                        Socket.role = 'driver';
-                        this.start();
-                    });
+                    this.buttons.solo.addEventListener('click', this.playSolo);
                     this.buttons.driver.setAttribute('disabled', true);
                     this.buttons.assist.setAttribute('disabled', true);
                     this.buttons.start.setAttribute('disabled', true);
@@ -143,6 +143,12 @@
                         duration: 500,
                         easing: 'ease-out'
                     });
+                }
+
+                playSolo() {
+                    Socket.isDriver = true;
+                    Socket.role = 'driver';
+                    this.start();
                 }
 
                 chooseRole (role) {

@@ -51,23 +51,36 @@
         }
 
         render () {
+            let r = this.body.r
             super.render();
-            if (!this.dead) {
-                this.ctx.fillStyle = 'white';
-                this.ctx.beginPath();
-                this.ctx.arc(0, 0, 10, 0, 2 * Math.PI);
-                this.ctx.fill();
-                this.ctx.closePath();
-            } else {
-                this.particleGenerator.particles.forEach(p => {
-                    this.ctx.save();
-                    this.ctx.fillStyle = 'white';
-                    this.ctx.translate(p.x, p.y);
-                    this.ctx.scale(p.scale, p.scale);
-                    this.ctx.fillRect(0, 0, 10, 10);
-                    this.ctx.restore();
-                });
-            }
+
+            this.ctx.fillStyle = '#fff';
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, -r);
+            this.ctx.lineTo(-r / 2, -r / 2);
+            this.ctx.lineTo(-r / 2, r / 2);
+            this.ctx.lineTo(0, 0);
+            this.ctx.lineTo(r / 2, r / 2);
+            this.ctx.lineTo(r / 2, -r / 2);
+            this.ctx.fill();
+
+            // if (!this.dead) {
+            //     this.ctx.fillStyle = 'white';
+            //     this.ctx.beginPath();
+            //     this.ctx.arc(0, 0, 10, 0, 2 * Math.PI);
+            //     this.ctx.fill();
+            //     this.ctx.closePath();
+            // } else {
+            //     this.particleGenerator.particles.forEach(p => {
+            //         this.ctx.save();
+            //         this.ctx.fillStyle = 'white';
+            //         this.ctx.translate(p.x, p.y);
+            //         this.ctx.scale(p.scale, p.scale);
+            //         this.ctx.fillRect(0, 0, 10, 10);
+            //         this.ctx.restore();
+            //     });
+            // }
             
             super.afterRender();
         }
