@@ -18,7 +18,7 @@
 <link rel="import" href="./portal.html">
 <link rel="import" href="./util/likelihood.html">
 <script>
-    const SPEED = 0.7;
+    const SPEED = 0.4;
     const STARTING_ANIM_MS = 1000;
     const GENERATE_PADDING = 200
     const SECTIONS_INDEX = [
@@ -232,22 +232,25 @@
 
             }
             this.scene.update(dt);
-            collisions = this.scene.world.getCollisions('player');
-            collisions.forEach(col => {
-                //console.log('hit');
-                if (col.data && col.data.collisionCallback) {
-                    col.data.collisionCallback(this.player);
-                }
-            });
 
-            if (this.entryPortal && this.exitPortal && !this.entryPortal.destroyed && !this.exitPortal.destroyed) {
-                collisions = this.scene.world.getCollisions(this.entryPortal.body.id);
+            if (Socket.isDriver) {
+                collisions = this.scene.world.getCollisions('player');
                 collisions.forEach(col => {
                     //console.log('hit');
                     if (col.data && col.data.collisionCallback) {
-                        col.data.collisionCallback(this.entryPortal);
+                        col.data.collisionCallback(this.player);
                     }
                 });
+
+                if (this.entryPortal && this.exitPortal && !this.entryPortal.destroyed && !this.exitPortal.destroyed) {
+                    collisions = this.scene.world.getCollisions(this.entryPortal.body.id);
+                    collisions.forEach(col => {
+                        //console.log('hit');
+                        if (col.data && col.data.collisionCallback) {
+                            col.data.collisionCallback(this.entryPortal);
+                        }
+                    });
+                }
             }
 
             if (this.player.dead) {
