@@ -23,6 +23,8 @@
 
             this.type = opts.type;
             Sound.load('teleport', '/assets/sounds/teleport.wav');
+            this.scale = 0;
+            this.animateIn();
         }
 
         setBoundPortal (portal) {
@@ -31,9 +33,11 @@
 
         collisionCallback (other) {
             if (other instanceof Player && this.boundTo) {
-                other.moveTo(this.boundTo.x, this.boundTo.y);
-                this.destroy();
-                this.boundTo.destroy();
+                other.startTeleportation().then(() => {
+                    other.moveTo(this.boundTo.x, this.boundTo.y);
+                    this.destroy();
+                    this.boundTo.destroy();
+                });
                 Sound.play('teleport');
             }
         }
@@ -47,11 +51,31 @@
             }
         }
 
+        update (dt) {
+            if (this.animating) {
+                this.scale += 0.015 * dt;
+                Logger.log(this.scale);
+                if (this.scale >= 1) {
+                    this.scale = 1;
+                    this.animating = false;
+                }
+            }
+        }
+
+        animateIn () {
+            if (!this.animating) {
+                this.animating = true;
+            }
+        }
+
         render () {
             if (this.destroyed) {
                 return;
             }
             super.render();
+
+            this.ctx.scale(this.scale, 1);
+            this.ctx.globalAlpha = this.scale;
 
             if (this.type === 'exit') {
                 this.ctx.rotate(180 * Math.PI / 180);
