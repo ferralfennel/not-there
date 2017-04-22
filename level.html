@@ -131,7 +131,7 @@
             lastSection = this.sections[this.sections.length - 1];
             
             if (Socket.isDriver) {
-                if (!this.sections.length || totalSectionHeight < this.scene.height) {
+                if (this.playerReady && (!this.sections.length || totalSectionHeight < this.scene.height)) {
                     let { height, y } = lastSection || {}
                     let newSection = this.generateSection(y - GENERATE_PADDING, height);
                     this.scene.addElement(newSection);
@@ -150,6 +150,7 @@
                         this.player.moveTo(this.player.x, this.scene.height - 200 * e);
                     } else {
                         this.started = null;
+                        this.playerReady = true;
                     }
                 }
             }
