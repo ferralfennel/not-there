@@ -1,0 +1,40 @@
+ul.inventory {
+  list-style: none;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+ul.inventory li {
+  margin-top: 10px;
+  display: block;
+  border: 1px solid rgba(255, 255, 255, .5);
+  line-height: 60px;
+  width: 60px;
+  text-align: center;
+  position: relative;
+  background: rgba(255, 255, 255, .1);
+}
+
+ul.inventory img {
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
+ul.inventory li span {
+  position: absolute;
+  display: inline-block;
+  background: #fec85d;
+  color: #957636;
+  width: 20px;
+  line-height: 20px;
+  font-size: 11px;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+}
