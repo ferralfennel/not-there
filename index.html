@@ -140,6 +140,8 @@
             class MainMenu extends View {
                 constructor () {
                     super('main-menu');
+                    Sound.load('ui', '/assets/sounds/ui.wav');
+                    Sound.load('validate', '/assets/sounds/validate.wav');
                 }
 
                 show () {
@@ -155,6 +157,16 @@
                         start: this.shell.querySelector('[data-role="game-start"]'),
                         solo: this.shell.querySelector('[data-role="game-start-solo"]')
                     };
+                    this.options = this.shell.querySelectorAll('.main-menu>div');
+                    this.optionCallbacks = [];
+
+                    for (let i = 0; i < this.options.length; i++) {
+                        this.optionCallbacks.push(() => {
+                            Sound.play('ui');
+                        });
+                        this.options[i].addEventListener('mouseenter', this.optionCallbacks[i]);
+                    };
+
                     this.els.driver.addEventListener('click', () => {
                         this.chooseRole('driver');
                     });
@@ -211,6 +223,12 @@
                     Socket.chooseRole(role).then(() => {
                         this.els.driver.querySelector('button').setAttribute('disabled', true);
                         this.els.assist.querySelector('button').setAttribute('disabled', true);
+                        this.els.driver.setAttribute('disabled', true);
+                        this.els.assist.setAttribute('disabled', true);
+                        Sound.play('validate');
+                        for (let i = 0; i < this.options.length; i++) {
+                            this.options[i].removeEventListener('mouseenter', this.optionCallbacks[i]);
+                        }
                     });
                 }
 
