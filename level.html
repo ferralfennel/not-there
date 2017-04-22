@@ -136,7 +136,7 @@
 
         update (dt) {
             // Slow down if the player has been hit
-            let d = (this.player.hitDelay ? 0.2 : 0.4) * dt,
+            let d = 0.4 * dt,
                 collisions,
                 now = Date.now(),
                 totalSectionHeight,
@@ -152,7 +152,7 @@
             lastSection = this.sections[this.sections.length - 1];
             
             if (Socket.isDriver) {
-                if (this.playerReady && (!this.sections.length || totalSectionHeight < this.scene.height)) {
+                if (this.playerReady && (!this.sections.length || totalSectionHeight < this.scene.height * 2)) {
                     let { height, y } = lastSection || {}
                     y = y - GENERATE_PADDING;
                     let newSection = this.generateSection(y, height);
@@ -178,7 +178,9 @@
                         this.player.moveTo(this.player.x, this.scene.height - 200 * e);
                     } else {
                         this.started = null;
-                        this.playerReady = true;
+                        setTimeout(() => {
+                            this.playerReady = true;
+                        }, 2000);
                     }
                 }
             }

@@ -10,6 +10,7 @@
     const ROMBOID_BASE_SIZE = 10;
     const ROMBOID_SPACING = 8;
     const WING_SPACING = 4;
+    const FIRE_COLORS = ['black', 'black', 'black', 'black', 'black', 'black', 'black', '#794f00', 'yellow'];
 
     class Player extends Entity {
         constructor(scene, opts) {
@@ -40,14 +41,18 @@
             });
             this.life = 3;
             this.xHistory = [0, 0];
-            this.tailParticles = new ParticleGenerator({
-                decay: 0.01,
+            this.smoke = new ParticleGenerator({
+                decay: 0.1,
                 maxSize: 3,
                 scale: 2,
-                gravity: 0.8,
-                number: 10,
-                initialVel: 0.1,
-                y: this.body.r + 25
+                gravity: 2,
+                number: 100,
+                initialVel: -2,
+                dataGenerator: () => {
+                    return {
+                        color: FIRE_COLORS[Math.floor(Math.random() * FIRE_COLORS.length)]
+                    }
+                }
             });
 
             if (!Socket.isDriver) {
@@ -92,10 +97,10 @@
                 if (this.hitDelay && now - this.hitDelay > HIT_DELAY) {
                     this.hitDelay = null;
                 }
-                if (!this.hitDelay) {
-                    this.tailParticles.generate(dt);
+                if (this.smoke.particles.length < 100) {
+                    this.smoke.generate();
                 }
-                this.tailParticles.tick(dt);
+                this.smoke.tick(dt);
                 this.move(this.velX * dt);
             }
 
@@ -116,6 +121,21 @@
             super.render();
 
             if (!this.dead) {
+                if (this.life === 1) {
+                    this.smoke.particles.forEach(p => {
+                        this.ctx.save();
+                        this.ctx.fillStyle = p.data.color;
+                        this.ctx.globalAlpha = 0.4;
+                        this.ctx.shadowBlur = 20;
+                        this.ctx.shadowColor = p.data.color;
+                        this.ctx.translate(p.x, p.y);
+                        this.ctx.scale(p.scale, p.scale);
+                        this.ctx.beginPath();
+                        this.ctx.arc(0, 0, 4, 0 , 2 * Math.PI);
+                        this.ctx.fill();
+                        this.ctx.restore();
+                    });
+                }
                 if (this.hitDelay) {
                     this.ctx.globalAlpha = Math.random() < 0.5 ? 0.6 : 0.8;
                 }
@@ -197,20 +217,6 @@
                 this.ctx.fill();
                 this.ctx.restore();
 
-                // Tail particles
-                this.tailParticles.particles.forEach(p => {
-                    let h = this.xHistory[this.xHistory.length - 1];
-                    let translateX = h ? h * -3 : 0;
-
-                    this.ctx.save();
-                    this.ctx.fillStyle = 'rgba(121, 246, 221, 0)'
-                    this.ctx.translate(p.x + translateX, p.y + 30);
-                    this.ctx.scale(p.scale, p.scale);
-                    this.ctx.rotate(45 * Math.PI / 180);
-                    this.ctx.fillRect(0, 0, 5, 5);
-                    this.ctx.restore();
-                });
-
                 // Romboids
                 for (let i = 0; i < 3; i++) {
                   let multi = Math[i % 2 === 0 ? 'sin' : 'cos'](this.lt / 250)
@@ -287,7 +293,6 @@
             if (!this.dead) {
                 this.dead = true;
                 this.particleGenerator.generate();
-                this.emit('die');
             }
         }
 

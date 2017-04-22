@@ -269,12 +269,15 @@
                     super('game');
                     this.solo = solo;
                     this.lastTs = 0;
+
+                    Socket.on('reset', this.reset.bind(this));
                 }
 
                 show () {
                     super.show();
                     this.roleScreen = new RoleScreen(this.shell, this);
                     Sound.load('game-over', '/assets/sounds/death.wav');
+                    Sound.load('start', '/assets/sounds/start.wav');
                     this.canvas = this.shell.querySelector('#canvas');
                     this.gameOverOverlay = this.shell.querySelector('#game-over-overlay');
                     this.gameOverRetry = this.shell.querySelector('#game-over-overlay>#retry');
@@ -297,6 +300,7 @@
                         easing: 'ease-out'
                     }).onfinish = () => {
                         this.level.start();
+                        Sound.play('start');
                     };
 
                     requestAnimationFrame(this.update.bind(this));
@@ -320,6 +324,7 @@
                 }
 
                 reset () {
+                    Socket.send('reset');
                     this.lastTs = 0;
                     this.gameOverScreen = false;
                     this.roleScreen.reset();
