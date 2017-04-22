@@ -11,6 +11,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    transition: transform 200ms linear;
 }
 
 .main-menu img {
@@ -29,9 +30,16 @@
     margin-top: 15px;
 }
 
-.main-menu>div:hover img {
+.main-menu>div:hover img,
+.main-menu>div.selected img{
     transform: scale(1.2);
     margin: 30px auto;
+}
+.main-menu>div.not-selected{
+    transform: translateX(50%);
+}
+.main-menu>div.selected {
+    transform: scale(1.5);
 }
 .main-menu button {
     border-radius: 0px;
@@ -86,7 +94,7 @@
 }
 
 .main-menu .alt-buttons {
-    position :absolute;
+    position: absolute;
     left: 50%;
     top: 50%;
     transform: translateX(-50%);

@@ -57,3 +57,17 @@ body.role-assist canvas {
 body.role-assist .role-screen {
     left: 0;
 }
+
+.game-over {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: #48263F;
+    opacity: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

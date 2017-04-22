@@ -36,6 +36,9 @@
         </template>
         <template id="game">
             <canvas id="canvas"></canvas>
+            <div class="game-over" id="game-over-overlay">
+                <button id="retry">Retry</button>
+            </div>
         </template>
         <template id="role-screen">
             <div class="role-screen">
@@ -89,10 +92,11 @@
             class View {
                 constructor (templateId) {
                     this.shell = document.getElementById('shell');
-                    this.template = document.getElementById(templateId);
-                    this.root = this.template.content.cloneNode(true);
+                    this.templateId = templateId;
                 }
                 show () {
+                    this.template = document.getElementById(this.templateId);
+                    this.root = this.template.content.cloneNode(true);
                     while (this.shell.firstChild) {
                         this.shell.removeChild(this.shell.firstChild);
                     }
@@ -110,8 +114,12 @@
                     shell.addEventListener('update', this.updateScore.bind(this));
                 }
 
+                reset () {
+                    this.score = 0;
+                }
+
                 updateScore() {
-                    let score = String(this.game.level.score).split('.')[0];
+                    let score = String(Math.floor(this.game.level.score));
 
                     while (score.length < 2) { score = `0${ score }`; }
 
@@ -221,10 +229,13 @@
                     document.body.className += ` role-${ role }`;
 
                     Socket.chooseRole(role).then(() => {
+                        let notSelected = role === 'driver' ? 'assist' : 'driver';
                         this.els.driver.querySelector('button').setAttribute('disabled', true);
                         this.els.assist.querySelector('button').setAttribute('disabled', true);
                         this.els.driver.setAttribute('disabled', true);
                         this.els.assist.setAttribute('disabled', true);
+                        this.els[role].classList.add('selected');
+                        this.els[notSelected].classList.add('not-selected');
                         Sound.play('validate');
                         for (let i = 0; i < this.options.length; i++) {
                             this.options[i].removeEventListener('mouseenter', this.optionCallbacks[i]);
@@ -257,15 +268,14 @@
 
                 show () {
                     super.show();
-                    this.shell.animate({
-                        opacity: [0, 1]
-                    }, {
-                        duration: 500,
-                        easing: 'ease-out'
-                    }).onfinish = () => {
-                        this.level.start();
-                    };
+                    this.roleScreen = new RoleScreen(this.shell, this);
+                    Sound.load('game-over', '/assets/sounds/death.wav');
                     this.canvas = this.shell.querySelector('#canvas');
+                    this.gameOverOverlay = this.shell.querySelector('#game-over-overlay');
+                    this.gameOverRetry = this.shell.querySelector('#game-over-overlay>#retry');
+                    this.gameOverRetry.addEventListener('click', () => {
+                        this.reset();
+                    });
                     window.addEventListener('resize', this.resize.bind(this));
                     this.resize();
                     Mouse.grab(window);
@@ -274,6 +284,15 @@
 
                     Keyboard.grab(window);
                     Logger.setContext(this.ctx);
+
+                    this.shell.animate({
+                        opacity: [0, 1]
+                    }, {
+                        duration: 500,
+                        easing: 'ease-out'
+                    }).onfinish = () => {
+                        this.level.start();
+                    };
 
                     requestAnimationFrame(this.update.bind(this));
                 }
@@ -284,8 +303,36 @@
                     this.level.update(dt);
                     this.level.render();
                     Logger.render();
-                    shell.dispatchEvent(new Event('update', {}));
-                    requestAnimationFrame(this.update.bind(this));
+                    this.shell.dispatchEvent(new Event('update', {}));
+                    if (this.level.gameOver) {
+                        setTimeout(() => {
+                            this.showGameOverScreen();
+                        }, 500);
+                    }
+                    if (!this.gameOverScreen) {
+                        requestAnimationFrame(this.update.bind(this));
+                    }
+                }
+
+                reset () {
+                    this.lastTs = 0;
+                    this.gameOverScreen = false;
+                    this.roleScreen.reset();
+                    this.show();
+                }
+
+                showGameOverScreen () {
+                    if (!this.gameOverScreen) {
+                        this.gameOverScreen = true;
+                        Sound.play('game-over');
+                        this.gameOverOverlay.animate({
+                            transform: ['scale(5, 5)', 'scale(1, 1)'],
+                            opacity: [0, 1]
+                        }, {
+                            fill: 'forwards',
+                            duration: 2000
+                        });
+                    }
                 }
 
                 resize () {
@@ -299,7 +346,6 @@
             mainMenu.onStart(() => {
                 let game = new Game();
                 game.show();
-                new RoleScreen(this.shell, game);
             });
 
             mainMenu.show();
