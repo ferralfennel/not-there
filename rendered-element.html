@@ -11,7 +11,8 @@
             this.a = opts.a || 0;
         }
 
-        update () {
+        update (dt) {
+            this.dt = dt;
         }
 
         get lt () {

@@ -1,0 +1,78 @@
+<link rel="import" href="../entity.html">
+<link rel="import" href="../image-manager.html">
+<link rel="import" href="../socket-manager.html">
+<script>
+    const OUTER_RADIUS = 50;
+    const INNER_RADIUS = 30;
+    const COLLECT_ANIM_MS = 150;
+
+    class Collectable extends Entity {
+        constructor(scene, x, y, itemId) {
+            super(scene.ctx, { x, y });
+            this.itemId = itemId;
+            this.world = scene.world;
+            this.body = this.world.add(null, {
+                type: 'circle',
+                x,
+                y,
+                a: this.a,
+                r: OUTER_RADIUS,
+                data: this
+            })
+            this.load();
+        }
+
+        render (dt) {
+            let multi = Math.sin(this.lt / 100);
+            let scale = 1.1 + multi * .1
+
+            this.a = (this.a || 0) + this.dt * .001;
+
+            super.render();
+
+
+            if (this.collected) {
+                let since = Date.now() - this.collected;
+
+                if (since >= COLLECT_ANIM_MS) {
+                    return super.afterRender();
+                }
+
+                let e = EasingFunctions.easeOutQuad(since / COLLECT_ANIM_MS);
+                let vanishScale = 1 + e;
+                let vanishAlpha = 1 - e;
+                this.ctx.scale(vanishScale, vanishScale);
+                this.ctx.globalAlpha = vanishAlpha;
+            }
+
+            this.ctx.drawImage(this.image, -INNER_RADIUS, -INNER_RADIUS, INNER_RADIUS * 2, INNER_RADIUS * 2);
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, .2)';
+
+            this.ctx.lineWidth = multi * 2 + 5;
+            this.ctx.beginPath();
+            this.ctx.scale(scale, scale);
+            this.ctx.arc(0, 0, OUTER_RADIUS, 0 , 2 * Math.PI);
+            this.ctx.stroke();
+
+            this.ctx.lineWidth = .5;
+            this.ctx.beginPath();
+            this.ctx.arc(0, 0, OUTER_RADIUS * 1.5, 0 , 2 * Math.PI);
+            this.ctx.stroke();
+
+            super.afterRender();
+        }
+
+        collisionCallback (other) {
+            if (this.collected) { return; }
+
+            if (other instanceof Player) {
+                this.collected = Date.now();
+                other.inventory.add(this.itemId);
+            }
+        }
+
+        load () {
+            this.image = Images.loadImage(`item-${ this.itemId }`, `/assets/item/${ this.itemId }.svg`);
+        }
+    }
+</script>

@@ -1,0 +1,21 @@
+<link rel="import" href="./section.html">
+<link rel="import" href="../entities/collectable.html">
+<script>
+    const ITEM_IDS = [ 'teleport' ];
+
+    class SectionCollectable extends Section {
+        constructor (scene, opts) {
+            super(scene, opts, 100);
+
+            let id = ITEM_IDS[Math.floor(this.chance.random() * ITEM_IDS.length)]
+
+            this.elements = [
+                new Collectable(scene, this.chance.random() * scene.width, 0, id)
+            ];
+        }
+
+        static get type () {
+            return 'collectable';
+        }
+    }
+</script>
