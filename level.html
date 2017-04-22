@@ -46,9 +46,18 @@
                 setInterval(() => {
                     Socket.send('player-state', this.player.toJSON());
                 }, 16);
+                Socket.on('place-portal', (e) => {
+                    this.placePortal(e.x, e.y);
+                });
             } else {
                 Socket.on('player-state', (e) => {
                     this.player.updateState(e);
+                });
+                Socket.on('portal-destroyed', (e) => {
+                    if (e.type === 'entry') {
+                        this.entryPortal.destroy();
+                        this.entryportal = null;
+                    }
                 });
             }
 
@@ -57,8 +66,10 @@
                     Socket.send('add-marker', { x: e.x, y: e.y });
                     this.addMarker(e.x, e.y);
                 } else {
-                    Socket.send('place-portal', { x: e.x, y: e.y });
-                    this.placePortal(e.x, e.y);
+                    if (!Socket.isDriver) {
+                        Socket.send('place-portal', { x: e.x, y: e.y });
+                        this.placePortal(e.x, e.y);
+                    }
                 }
             });
 

@@ -49,6 +49,12 @@
                 initialVel: 0.1,
                 y: this.body.r + 25
             });
+
+            if (!Socket.isDriver) {
+                Socket.on('player-hit', (e) => {
+                    this.hit(e.hit);
+                });
+            }
         }
 
         update (dt) {
@@ -261,6 +267,9 @@
                 return;
             }
             this.life = Math.max(0, this.life - points);
+            if (Socket.isDriver) {
+                Socket.send('player-hit', { hit: points });
+            }
             if (this.life <= 0) {
                 this.die();
             } else {
