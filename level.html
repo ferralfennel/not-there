@@ -99,14 +99,18 @@
             }
 
             let d = 0.4 * dt;
+
             this.offset += d;
+
             if (!this.frozen) {
                 this.sections.forEach(section => {
                     section.move(0, d);
                 });
+
                 this.markers.forEach(marker => {
                     marker.move(0, d);
                 });
+
                 this.scene.update(dt);
                 collisions = this.scene.world.getCollisions('player');
                 collisions.forEach(col => {
@@ -115,12 +119,14 @@
                         col.data.collisionCallback(this.player);
                     }
                 });
+
                 if (this.player.dead) {
                     this.freeze();
                 }
-            } else {
-                this.player.update(dt);
+
             }
+
+            this.player.update(dt);
         }
 
         freeze () {

@@ -31,12 +31,14 @@
             let moving = false,
                 now = Date.now();
 
-            if (Keyboard.isDown(37)) {
-                this.velX = Math.max(this.velX - this.accel, -2);
-                moving = true;
-            } else if (Keyboard.isDown(39)) {
-                this.velX = Math.min(this.velX + this.accel, 2);
-                moving = true;
+            if (!this.dead) {
+                if (Keyboard.isDown(37)) {
+                    this.velX = Math.max(this.velX - this.accel, -2);
+                    moving = true;
+                } else if (Keyboard.isDown(39)) {
+                    this.velX = Math.min(this.velX + this.accel, 2);
+                    moving = true;
+                }
             }
 
             if (!moving) {
