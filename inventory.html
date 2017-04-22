@@ -1,0 +1,37 @@
+<script type="text/javascript">
+  class Inventory extends EventEmitter {
+    constructor () {
+        super();
+        this.items = {};
+    }
+
+    add (id, amt = 1) {
+        if (!this.items[id]) { this.items[id] = 0; }
+        this.items[id]++;
+        this.emit('change');
+    }
+
+    has (id, amt = 1) {
+        return this.items[id] && this.items[id] >= amt;
+    }
+
+    remove (id, amt = 1) {
+        if (!this.has(id, amt)) { throw new Error('Not enough in inventory'); }
+        this.items[id] -= amt;
+        this.emit('change');
+        if (this.items[id] <= 0) { delete this.items[id]; }
+    }
+
+    render() {
+      return Object.keys(this.items).sort().map(id => {
+        let count = this.items[id];
+
+        return (
+          `<li class="item"><img src="/assets/item/${ id }@2x.png" />` +
+            (count ? `<span>${ count }</span>` : '') +
+          '</li>'
+        );
+      }).join('\n');
+    }
+  }
+</script>

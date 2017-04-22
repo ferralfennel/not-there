@@ -1,5 +1,6 @@
 <link rel="import" href="../entity.html">
 <link rel="import" href="../image-manager.html">
+<link rel="import" href="../socket-manager.html">
 <script>
 const ASSETS_COUNT = 4
     class Asteroid extends Entity {
@@ -40,7 +41,8 @@ const ASSETS_COUNT = 4
         }
 
         load () {
-            this.image = Images.loadImage(`asteroid-${this.assetIndex}`, `/assets/asteroid/0${ this.assetIndex }@2x.png`);
+            let suffix = Socket.isDriver ? '' : '-w';
+            this.image = Images.loadImage(`asteroid-${ this.assetIndex }${ suffix }`, `/assets/asteroid/0${ this.assetIndex }${ suffix }@2x.png`);
         }
 
         collisionCallback (other) {

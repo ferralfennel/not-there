@@ -16,6 +16,7 @@
             super(scene.ctx, opts);
             scene.addElement(this);
             this.world = scene.world;
+            this.inventory = opts.inventory;
             this.body = this.world.add('player', {
               type: 'circle',
               x: this.x,
