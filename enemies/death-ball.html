@@ -1,0 +1,59 @@
+<link rel="import" href="../entity.html">
+<link rel="import" href="../image-manager.html">
+<link rel="import" href="../socket-manager.html">
+<script>
+    class DeathBall extends Entity {
+        constructor(scene, x, y, opts) {
+            super(scene.ctx, { x, y });
+            this.opts = Object.assign({
+                size: 20,
+                rotate: true,
+                move: true
+            }, opts);
+            this.chance = new Chance(this.opts.seed);
+            this.rotationDir = this.chance.random() > .5 ? 1 : -1;
+            this.rotationSpeed = this.chance.random() / 2000 * this.rotationDir;
+            this.dir = this.chance.random() > .5 ? 1 : -1;
+            this.speed = this.chance.random() / 5 * this.dir;
+            this.size = this.opts.size;
+            this.world = scene.world;
+            this.body = this.world.add(null, {
+                type: 'circle',
+                x: this.x,
+                y: this.y,
+                r: this.size,
+                a: this.a,
+                data: this
+            });
+
+            this.load();
+        }
+
+        load () {
+            this.image = Images.loadImage('death-ball', '/assets/enemy/death-ball@2x.png');
+        }
+
+        collisionCallback (other) {
+            if (other instanceof Player && !other.hitDelay) {
+                other.hit(3);
+            }
+        }
+
+        update(dt) {
+            if (this.opts.rotate) {
+                this.a = (this.a || 0) + this.rotationSpeed * dt;
+            }
+
+            if (this.opts.move) {
+                this.move(this.speed * dt, 0);
+            }
+        }
+
+        render () {
+            super.render();
+            this.ctx.rotate(this.a);
+            this.ctx.drawImage(this.image, -this.size, -this.size, this.size * 2, this.size * 2);
+            super.afterRender();
+        }
+    }
+</script>

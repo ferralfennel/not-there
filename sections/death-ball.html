@@ -1,0 +1,24 @@
+<link rel="import" href="./section.html">
+<link rel="import" href="../enemies/death-ball.html">
+<script>
+    class SectionDeathBall extends Section {
+        constructor(scene, opts) {
+            super(scene, opts, 30);
+
+            let size = this.chance.random() * 80 + 150;
+
+            this.elements = [
+                new DeathBall(scene, this.chance.random() * scene.width, 0, {
+                    size,
+                    seed: String(this.chance.random()),
+                    rotate: true,
+                    move: true
+                })
+            ];
+        }
+
+        static get type() {
+            return 'death-ball';
+        }
+    }
+</script>
