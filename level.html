@@ -39,8 +39,6 @@
             this.entryPortal = null;
             this.exitPortal = null;
 
-            this.player.on('die', this.fail.bind(this));
-
             Socket.on('add-marker', (e) => {
                 this.addMarker(e.x, e.y, e.role);
             });
