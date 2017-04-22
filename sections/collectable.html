@@ -1,13 +1,17 @@
 <link rel="import" href="./section.html">
 <link rel="import" href="../entities/collectable.html">
+<link rel="import" href="../util/likelihood.html">
 <script>
-    const ITEM_IDS = [ 'teleport' ];
+    const ITEMS_INDEX = [
+        { likelihood: 3, id: 'teleport' },
+        { likelihood: 1, id: 'shield' }
+    ];
 
     class SectionCollectable extends Section {
         constructor (scene, opts) {
-            super(scene, opts, 100);
+            super(scene, opts, 50);
 
-            let id = ITEM_IDS[Math.floor(this.chance.random() * ITEM_IDS.length)]
+            let id = pickByLikelihood(ITEMS_INDEX, 'id', this.chance);
 
             this.elements = [
                 new Collectable(scene, this.chance.random() * scene.width, 0, id)

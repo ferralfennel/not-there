@@ -13,16 +13,18 @@
 <link rel="import" href="./mouse-manager.html">
 <link rel="import" href="./inventory.html">
 <link rel="import" href="./portal.html">
+<link rel="import" href="./util/likelihood.html">
 <script>
+    const SPEED = 0.7;
     const STARTING_ANIM_MS = 1000;
     const GENERATE_PADDING = 200
     const SECTIONS_INDEX = [
-        { constr: SectionPaddles, likelyhood: 4 },
-        { constr: SectionAsteroidSingle, likelyhood: 2 },
-        { constr: SectionAsteroidsMulti, likelyhood: 1 },
-        { constr: SectionAsteroidBelt, likelyhood: 1 },
-        { constr: SectionAsteroidWall, likelyhood: 1 },
-        { constr: SectionCollectable, likelyhood: 2 }
+        { constr: SectionPaddles, likelihood: 4 },
+        { constr: SectionAsteroidSingle, likelihood: 2 },
+        { constr: SectionAsteroidsMulti, likelihood: 1 },
+        { constr: SectionAsteroidBelt, likelihood: 1 },
+        { constr: SectionAsteroidWall, likelihood: 1 },
+        { constr: SectionCollectable, likelihood: 2 }
     ]
 
     class Level {
@@ -145,7 +147,7 @@
 
         update (dt) {
             // Slow down if the player has been hit
-            let d = 0.4 * dt,
+            let d = SPEED * dt,
                 collisions,
                 now = Date.now(),
                 totalSectionHeight,
@@ -254,24 +256,7 @@
 
         generateSection(y, height, Constr = null, seed = null) {
             if (!Constr) {
-                let ltotal = 0;
-                let lcur = 0;
-                let ltarget;
-
-                for (let section of SECTIONS_INDEX) {
-                    ltotal += section.likelyhood;
-                }
-
-                ltarget = this.chance.random() * ltotal;
-
-                for (let section of SECTIONS_INDEX) {
-                    if (lcur + section.likelyhood > ltarget) {
-                        Constr = section.constr;
-                        break;
-                    }
-
-                    lcur += section.likelyhood;
-                }
+                Constr = pickByLikelihood(SECTIONS_INDEX, 'constr', this.chance);
             }
 
             seed = seed || String(this.chance.random());

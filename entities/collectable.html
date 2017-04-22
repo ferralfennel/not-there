@@ -63,11 +63,16 @@
         }
 
         collisionCallback (other) {
-            if (this.collected) { return; }
-
             if (other instanceof Player) {
+                if (this.collected || this.itemId === 'shield' && other.life >= 3) { return; }
+
                 this.collected = Date.now();
-                other.inventory.add(this.itemId);
+
+                if (this.itemId === 'shield') {
+                  other.life = 3;
+                } else {
+                  other.inventory.add(this.itemId);
+                }
             }
         }
 

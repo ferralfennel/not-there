@@ -1,0 +1,22 @@
+<script>
+    function pickByLikelihood(list, ns, math = null) {
+        let ltotal = 0;
+        let lcur = 0;
+        let ltarget;
+
+        for (let value of list) {
+            ltotal += value.likelihood;
+        }
+
+        ltarget = (math || Math).random() * ltotal;
+
+        for (let value of list) {
+            if (lcur + value.likelihood > ltarget) {
+                return value[ns];
+                break;
+            }
+
+            lcur += value.likelihood;
+        }
+    }
+</script>
