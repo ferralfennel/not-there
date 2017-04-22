@@ -1,0 +1,26 @@
+<link rel="import" href="./section.html">
+<link rel="import" href="../enemies/fire-cunt.html">
+<link rel="import" href="../enemies/chilli-cunt.html">
+<script>
+    class SectionEnemy extends Section {
+        constructor(scene, opts) {
+            super(scene, opts, 200);
+            if (this.chance.random() < 0.5) {
+                this.elements = [
+                    new ChilliCunt(scene, this.chance.random() * scene.width, 0, { seed: String(this.chance.random()) })
+                ];
+            } else {
+                this.elements = [
+                    new FireCunt(scene, this.chance.random() * scene.width, 0, { seed: String(this.chance.random()) })
+                ];
+            }
+            this.elements = [
+                new FireCunt(scene, this.chance.random() * scene.width, 0, { seed: String(this.chance.random()) })
+            ];
+        }
+
+        static get type() {
+            return 'enemy';
+        }
+    }
+</script>

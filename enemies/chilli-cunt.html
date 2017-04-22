@@ -1,0 +1,95 @@
+<link rel="import" href="../entity.html">
+<link rel="import" href="../body-group.html">
+
+<script>
+    class ChilliCunt extends Entity {
+        constructor (scene, x, y, opts) {
+            super(scene.ctx, { x, y, a: 0 });
+            this.opts = Object.assign({}, opts);
+            this.chance = new Chance(this.opts.seed);
+            this.world = scene.world;
+            this.scene = scene;
+
+            this.body = this.world.add(null, {
+                type: 'circle',
+                x: this.x,
+                y: this.y + 30,
+                r: 30,
+                data: this
+            });
+
+            this.started = Date.now();
+            this.willFireIn = this.chance.random() * 3000 + 1000;
+        }
+
+        update (dt) {
+            if (Date.now() - this.started >= this.willFireIn) {
+                this.fire();
+            }
+            if (this.firing) {
+                // Follow player
+                let d = {
+                    x: this.scene.player.x - this.x,
+                    y: this.scene.player.y - this.y
+                };
+                this.a = -90 * Math.PI / 180 + Math.atan2(d.y, d.x);
+                this.move(d.x / Math.abs(d.x) * 0.1 * dt, d.y / Math.abs(d.y) * 0.1 * dt);
+            }
+        }
+
+        collisionCallback (other) {
+            if (other instanceof Player) {
+                other.hit(3);
+            }
+        }
+
+        fire () {
+            if (!this.firing) {
+                this.firing = true;
+            }
+        }
+
+        render () {
+            super.render();
+
+            this.ctx.strokeStyle = '#BA3646';
+            this.ctx.lineWidth = 1;
+            this.ctx.setLineDash([6, 6]);
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, -160);
+            this.ctx.lineTo(0, -60);
+            this.ctx.stroke();
+
+            this.ctx.translate(0, -30);
+            this.ctx.rotate(Math.PI);
+
+            this.ctx.fillStyle = 'white';
+            this.triangle(80);
+            this.ctx.rotate(Math.PI);
+            this.ctx.fillStyle = '#BA3646';
+            this.triangle(40);
+
+            super.afterRender();
+        }
+
+        static coordFromAngle (a, d) {
+            return {
+                x: Math.cos(a) * d,
+                y: Math.sin(a) * d,
+            }
+        }
+
+        triangle (size) {
+            let a = Math.sqrt(Math.pow(size, 2) - (Math.pow(size / 2, 2)));
+            let p = ChilliCunt.coordFromAngle(270 * Math.PI / 180, a / 2);
+            this.ctx.beginPath();
+            this.ctx.lineTo(p.x, p.y);
+            p = ChilliCunt.coordFromAngle(30 * Math.PI / 180, a / 2);
+            this.ctx.lineTo(p.x, p.y);
+            p = ChilliCunt.coordFromAngle(150 * Math.PI / 180, a / 2);
+            this.ctx.lineTo(p.x, p.y);
+            this.ctx.fill();
+            this.ctx.closePath();
+        }
+    }
+</script>

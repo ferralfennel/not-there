@@ -1,0 +1,121 @@
+<link rel="import" href="../entity.html">
+<link rel="import" href="../body-group.html">
+
+<script>
+    class FireCunt extends Entity {
+        constructor (scene, x, y, opts) {
+            super(scene.ctx, { x, y, a: 0 });
+            this.opts = Object.assign({}, opts);
+            this.chance = new Chance(this.opts.seed);
+            this.rotationDir = this.chance.random() > .5 ? 1 : -1;
+            this.rotationSpeed = this.chance.random() / 500 * this.rotationDir;
+            this.world = scene.world;
+
+            this.dartBodies = [];
+
+            this.body = this.world.add(null, {
+                type: 'circle',
+                x: this.x,
+                y: this.y,
+                r: 30,
+                data: this
+            });
+
+            for (let i = 0; i < 4; i++) {
+                this.dartBodies.push(this.world.add(null, {
+                    type: 'circle',
+                    x: this.x,
+                    y: this.y,
+                    r: 20,
+                    data: this
+                }));
+            }
+
+            this.d = 30;
+            this.rotation = 0;
+            this.started = Date.now();
+            this.willFireIn = this.chance.random() * 3000 + 1000;
+        }
+
+        update (dt) {
+            let deltaRot = this.rotationSpeed * dt,
+                deltaD = 0.9 * dt;
+            this.rotation += deltaRot;
+            if (Date.now() - this.started >= this.willFireIn) {
+                this.fire();
+            }
+            if (this.firing) {
+                this.d += deltaD;
+            }
+            this.dartBodies.forEach((body, index) => {
+                let r = this.firing ? this.firingRotation : this.rotation;
+                r += index * 90 * Math.PI / 180;
+                body.x = this.body.x + Math.cos(r) * (this.d + 20);
+                body.y = this.body.y + Math.sin(r) * (this.d + 20);
+            });
+        }
+
+        collisionCallback (other) {
+            if (other instanceof Player) {
+                other.hit(3);
+            }
+        }
+
+        fire () {
+            if (!this.firing) {
+                this.firing = true;
+                this.firingRotation = this.rotation;
+            }
+        }
+
+        render () {
+            super.render();
+
+            for (let i = 0; i < 4; i++) {
+                this.ctx.save();
+                this.ctx.rotate(this.firing ? this.firingRotation : this.rotation);
+                this.ctx.rotate((i * 90) * Math.PI / 180);
+                this.ctx.strokeStyle = '#BA3646';
+                this.ctx.lineWidth = 1;
+                this.ctx.setLineDash([6, 6]);
+                this.ctx.beginPath();
+                this.ctx.moveTo(25 + Math.max(this.d - 60, 0), 0);
+                this.ctx.lineTo(25 + Math.max(this.d - 60, 0) + Math.min(this.d, 60), 0);
+                this.ctx.stroke();
+                this.ctx.fillStyle = '#BA3646';
+                this.ctx.translate(this.d, 0);
+                this.ctx.rotate(-45 * Math.PI / 180);
+                this.ctx.fillRect(0, 0, 30, 30);
+                this.ctx.fillStyle = '#982B3A';
+                this.ctx.fillRect(7.5, 7.5, 15, 15);
+                this.ctx.restore();
+            }
+
+            this.ctx.rotate(this.rotation);
+
+            this.ctx.fillStyle = 'white';
+
+            this.ctx.save();
+            this.ctx.rotate(45 * Math.PI / 180);
+            this.ctx.translate(-25, -25);
+            this.ctx.fillRect(0, 0, 50, 50);
+            this.ctx.fillStyle = '#982B3A';
+            this.ctx.fillRect(12.5, 12.5, 25, 25);
+            this.ctx.restore();
+
+            for (let i = 0; i < 4; i++) {
+                this.ctx.save();
+                this.ctx.rotate(45 * Math.PI / 180);
+                this.ctx.rotate((i * 90) * Math.PI / 180);
+                this.ctx.translate(-25, -25);
+                this.ctx.fillStyle = '#E6E6E6';
+                this.ctx.fillRect(-10, 10, 10, 30);
+                this.ctx.restore();
+            }
+
+            this.ctx.restore();
+
+            super.afterRender();
+        }
+    }
+</script>
