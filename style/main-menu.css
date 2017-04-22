@@ -33,13 +33,6 @@
     transform: scale(1.2);
     margin: 30px auto;
 }
-
-.main-menu button[disabled] {
-    opacity: 1;
-    color: rgba(255, 255, 255, .3);
-    background: #1a1521;
-}
-
 .main-menu button {
     border-radius: 0px;
     height: 40px;
@@ -84,6 +77,12 @@
 
 .main-menu .assist button {
     background: #FFC952;
+}
+
+.main-menu button[disabled] {
+    opacity: 1;
+    color: rgba(255, 255, 255, .3);
+    background: #1a1521;
 }
 
 .main-menu .alt-buttons {

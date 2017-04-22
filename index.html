@@ -149,45 +149,45 @@
 
                     super.show();
                     this.ready = {};
-                    this.buttons = {
+                    this.els = {
                         driver: this.shell.querySelector('[data-role="menu-driver"]'),
                         assist: this.shell.querySelector('[data-role="menu-assist"]'),
                         start: this.shell.querySelector('[data-role="game-start"]'),
                         solo: this.shell.querySelector('[data-role="game-start-solo"]')
                     };
-                    this.buttons.driver.addEventListener('click', () => {
+                    this.els.driver.addEventListener('click', () => {
                         this.chooseRole('driver');
                     });
-                    this.buttons.assist.addEventListener('click', () => {
+                    this.els.assist.addEventListener('click', () => {
                         this.chooseRole('assist');
                     });
-                    this.buttons.start.addEventListener('click', () => {
+                    this.els.start.addEventListener('click', () => {
                         Socket.ready();
                     });
-                    this.buttons.solo.addEventListener('click', this.playSolo.bind(this));
-                    this.buttons.driver.setAttribute('disabled', true);
-                    this.buttons.assist.setAttribute('disabled', true);
-                    this.buttons.start.setAttribute('disabled', true);
-                    this.buttons.solo.setAttribute('disabled', true);
+                    this.els.solo.addEventListener('click', this.playSolo.bind(this));
+                    this.els.driver.setAttribute('disabled', true);
+                    this.els.assist.setAttribute('disabled', true);
+                    this.els.start.setAttribute('disabled', true);
+                    this.els.solo.setAttribute('disabled', true);
                     Socket.connect().then((data) => {
                         ['driver', 'assist'].forEach(role => {
                             if (data.rolesTaken.indexOf(role) === -1) {
-                                this.buttons[role].removeAttribute('disabled');
+                                this.els[role].removeAttribute('disabled');
                             }
                         });
                         Socket.socket.on('role-choosen', (role) => {
-                            this.buttons[role].setAttribute('disabled', true);
+                            this.els[role].setAttribute('disabled', true);
                         });
 
                         Socket.socket.on('all-ready', () => {
-                            this.buttons.start.removeAttribute('disabled');
+                            this.els.start.removeAttribute('disabled');
                         });
 
                         Socket.socket.on('start', (role) => {
                             this.start();
                         });
                     }).catch(e => {
-                        this.buttons.solo.removeAttribute('disabled');
+                        this.els.solo.removeAttribute('disabled');
                     });
                     this.shell.animate({
                         opacity: [0, 1]
@@ -209,8 +209,8 @@
                     document.body.className += ` role-${ role }`;
 
                     Socket.chooseRole(role).then(() => {
-                        this.buttons.driver.setAttribute('disabled', true);
-                        this.buttons.assist.setAttribute('disabled', true);
+                        this.els.driver.querySelector('button').setAttribute('disabled', true);
+                        this.els.assist.querySelector('button').setAttribute('disabled', true);
                     });
                 }
 
