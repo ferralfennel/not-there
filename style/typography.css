@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'akkurat';
+    src: url("/assets/fonts/Akkurat Font/Akkurat.otf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'akkurat';
+    src: url("/assets/fonts/Akkurat Font/Akkurat-Bold.otf");
+    font-weight: bold;
+    font-style: normal;
+}

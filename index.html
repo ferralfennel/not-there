@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
         <link rel="manifest" href="/manifest.json">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/style/typography.css">
         <style>
             html, body {
                 margin: 0px;
@@ -12,6 +13,7 @@
                 overflow: hidden;
                 background-color: #242033;
                 transition: background-color 2s;
+                font-family: akkurat;
             }
 
             #shell {
@@ -82,6 +84,67 @@
                 margin: auto;
                 width: 120px;
             }
+            .main-menu {
+                display: flex;
+                height: 100%;
+            }
+            .main-menu>div {
+                color: white;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .main-menu img {
+                width: 200px;
+                height: 200px;
+            }
+            .main-menu h1 {
+                font-weight: normal;
+            }
+            .main-menu button[disabled] {
+                opacity: 0.6;
+            }
+            .main-menu button {
+                font-family: akkurat;
+                border-radius: 0px;
+                height: 40px;
+                min-width: 120px;
+                width: 120px;
+                border: 0px;
+                position: relative;
+                padding: none;
+                z-index: 2;
+                margin-top: 12px;
+                background: #73F7DD;
+                font-size: 16px;
+                color: #F2F2F2;
+                cursor: pointer;
+            }
+            .main-menu button::before,
+            .main-menu button::after {
+                z-index: -1;
+                position: absolute;
+                content: ' ';
+                width: 28px;
+                height: 28px;
+                background: inherit;
+                transform: rotate(45deg);
+                top: 6px;
+            }
+            .main-menu button::before {
+                left: -14px;
+            }
+            .main-menu button::after {
+                right: -14px;
+            }
+            .main-menu .assist {
+                background: #492540;
+            }
+            .main-menu .assist button {
+                background: #FFC952;
+            }
         </style>
         <link rel="import" href="./level.html">
         <link rel="import" href="./keyboard.html">
@@ -91,17 +154,27 @@
     </head>
     <body>
         <template id="main-menu">
-            <button type="button" id="solo-button">Solo Mode</button>
-            <button type="button" id="drive-button">Drive</button>
-            <button type="button" id="assist-button">Assist</button>
-            <button type="button" id="start-button">Start</button>
+            <div class="main-menu">
+                <div class="drive">
+                    <h1>Pilot</h1>
+                    <img src="/assets/avatar/driver.svg" alt="">
+                    <button type="button" id="drive-button">Drive</button>
+                </div>
+                <div class="assist">
+                    <h1>Navigator</h1>
+                    <img src="/assets/avatar/assist.svg" alt="">
+                    <button type="button" id="assist-button">Assist</button>
+                </div>
+                <button type="button" id="solo-button">Solo Mode</button>
+                <button type="button" id="start-button">Start</button>
+            </div>
         </template>
         <template id="game">
             <canvas id="canvas"></canvas>
         </template>
         <template id="role-screen">
             <div class="role-screen">
-                <div class='inner'>
+                <div class="inner">
                     <img class="avatar show-role-driver" src="/assets/avatar/driver.svg" />
                     <img class="avatar show-role-assist" src="/assets/avatar/assist.svg" />
                 </div>
