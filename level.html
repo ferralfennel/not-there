@@ -39,7 +39,7 @@
             this.exitPortal = null;
 
             Socket.on('add-marker', (e) => {
-                this.addMarker(e.x, e.y);
+                this.addMarker(e.x, e.y, e.role);
             });
 
             if (Socket.isDriver) {
@@ -62,12 +62,16 @@
             }
 
             Mouse.onDown((e) => {
+                let canvasBB = this.scene.ctx.canvas.getBoundingClientRect();
+                let x = e.x - canvasBB.left * 2;
+                let role = Socket.isDriver ? 'driver' : 'assist';
+
                 if (!e.rightClick) {
-                    Socket.send('add-marker', { x: e.x, y: e.y });
-                    this.addMarker(e.x, e.y);
+                    Socket.send('add-marker', { x, y: e.y, role });
+                    this.addMarker(x, e.y, role);
                 } else {
                     if (!Socket.isDriver) {
-                        Socket.send('place-portal', { x: e.x, y: e.y });
+                        Socket.send('place-portal', { x, y: e.y });
                         this.placePortal(e.x, e.y);
                     }
                 }
@@ -94,8 +98,8 @@
             }
         }
 
-        addMarker (x, y) {
-            let m = new Marker(this.scene.ctx, { x, y });
+        addMarker (x, y, role) {
+            let m = new Marker(this.scene.ctx, { x, y, role });
             this.markers.push(m);
             this.scene.addElement(m);
         }

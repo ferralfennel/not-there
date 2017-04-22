@@ -1,10 +1,12 @@
 <link rel="import" href="./rendered-element.html">
 <script>
-    const MARKER_COL_1 = '#fec85d';
+    const MARKER_COL_1 = '#73f7dd';
+    const MARKER_COL_2 = '#fec85d';
 
     class Marker extends RenderedElement {
         constructor (ctx, opts) {
             super(ctx, opts);
+            this.role = opts.role;
         }
 
         move (x, y) {
@@ -18,7 +20,7 @@
             let r = 25
             let s = 8
 
-            this.ctx.fillStyle = MARKER_COL_1;
+            this.ctx.fillStyle = this.role === 'driver' ? MARKER_COL_1 : MARKER_COL_2;
             this.romboid(0, 0, r - s);
             this.ctx.fill();
 

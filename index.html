@@ -206,7 +206,6 @@
                         });
                         Socket.socket.on('role-choosen', (role) => {
                             this.buttons[role].setAttribute('disabled', true);
-                            document.body.className += ` role-${ role }`;
                         });
 
                         Socket.socket.on('all-ready', () => {
@@ -230,12 +229,14 @@
                 playSolo() {
                     Socket.isDriver = true;
                     Socket.role = 'driver';
-                    document.body.className += ' role-driver';
-                    //foo document.body.className += ' role-assist';
+                    // document.body.className += ' role-driver';
+                    document.body.className += ' role-assist';
                     this.start();
                 }
 
                 chooseRole (role) {
+                    document.body.className += ` role-${ role }`;
+
                     Socket.chooseRole(role).then(() => {
                         this.buttons.driver.setAttribute('disabled', true);
                         this.buttons.assist.setAttribute('disabled', true);
