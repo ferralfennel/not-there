@@ -5,7 +5,7 @@
         constructor(scene, opts) {
             super(scene, opts, 700);
             this.elements = [
-                new AsteroidBelt(scene, 0, 0, this.seed)
+                new AsteroidBelt(scene, 0, 0, { seed: this.seed })
             ];
         }
 

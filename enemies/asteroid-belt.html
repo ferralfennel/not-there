@@ -7,10 +7,12 @@
         constructor(scene, x, y, opts) {
             super(scene.ctx, { x, y });
             this.opts = Object.assign({
-                height: 200
+                height: 200,
+                seed: Math.random()
             }, opts);
-            this.chance = new Chance(String(seed));
+            this.seed = this.opts.seed;
             this.height = this.opts.height;
+            this.chance = new Chance(String(this.seed));
             this.world = scene.world;
 
             this.asteroids = [];
