@@ -5,84 +5,8 @@
         <meta charset="UTF-8">
         <link rel="manifest" href="/manifest.json">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-            html, body {
-                margin: 0px;
-                padding: 0px;
-                overflow: hidden;
-                background-color: #242033;
-                transition: background-color 2s;
-            }
-
-            #shell {
-                width: 100vw;
-                height: 100vh;
-            }
-
-            canvas {
-                transform: scale(0.5, 0.5);
-                transform-origin: 0 0;
-                position: absolute;
-                left: 0;
-                top: 0;
-                background-image: linear-gradient(#492540, #34314c);
-            }
-
-            .show-role-assist, .show-role-driver {
-                display: none;
-            }
-
-            body.role-assist .show-role-assist {
-                display: block;
-            }
-
-            body.role-driver .show-role-driver {
-                display: block;
-            }
-
-            body.role-driver {
-                background-color: #252235;
-            }
-
-            body.role-assist {
-                background-color: #252235;
-            }
-
-            body.role-assist canvas {
-                background-color: #262339;
-            }
-
-            .role-screen {
-                position: absolute;
-                position: absolute;
-                left: 750px;
-                width: calc(100vw - 750px);
-                height: 100vh;
-                text-align: center;
-                top: 0;
-                overflow: hidden;
-            }
-
-            body.role-assist canvas {
-                left: calc(100vw - 750px);
-            }
-
-            body.role-assist .role-screen {
-                left: 0;
-            }
-
-            .role-screen .inner {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-            }
-
-            .role-screen img {
-                margin: auto;
-                width: 120px;
-            }
-        </style>
+        <link rel="stylesheet" href="/css/fonts.css">
+        <link rel="stylesheet" href="/css/main.css">
         <link rel="import" href="./level.html">
         <link rel="import" href="./keyboard.html">
         <link rel="import" href="./log.html">
@@ -103,7 +27,12 @@
             <div class="role-screen">
                 <div class='inner'>
                     <img class="avatar show-role-driver" src="/assets/avatar/driver.svg" />
+                    <img class="marker show-role-driver" src="/assets/marker/driver.svg" />
                     <img class="avatar show-role-assist" src="/assets/avatar/assist.svg" />
+                    <img class="marker show-role-assist" src="/assets/marker/assist.svg" />
+                    <h1 data-role='score'></h1>
+                    <h2 class="show-role-driver">Pilot</h2>
+                    <h2 class="show-role-assist">Navigator</h2>
                 </div>
             </div>
         </template>
@@ -158,11 +87,28 @@
             }
 
             class RoleScreen {
-                constructor (parent) {
-                    this.template = document.getElementById('role-screen');
+                constructor (parent, game) {
                     this.parent = parent;
+                    this.game = game;
+                    this.template = document.getElementById('role-screen');
                     this.root = this.template.content.cloneNode(true);
                     this.parent.appendChild(this.root);
+                    shell.addEventListener('update', this.updateScore.bind(this));
+                }
+
+                updateScore() {
+                    let score = String(this.game.level.score).split('.')[0];
+
+                    while (score.length < 2) { score = `0${ score }`; }
+
+                    console.log(score)
+                    if (score !== this.score) {
+                        for (let el of document.querySelectorAll('[data-role="score"]')) {
+                            el.innerHTML = score;
+                        }
+                    }
+
+                    this.score = score;
                 }
             }
 
@@ -287,8 +233,6 @@
                     this.level.start();
 
                     requestAnimationFrame(this.update.bind(this));
-
-                    new RoleScreen(this.shell);
                 }
 
                 update (ts) {
@@ -297,6 +241,7 @@
                     this.level.update(dt);
                     this.level.render();
                     Logger.render();
+                    shell.dispatchEvent(new Event('update', {}));
                     requestAnimationFrame(this.update.bind(this));
                 }
 
@@ -311,6 +256,7 @@
             mainMenu.onStart(() => {
                 let game = new Game();
                 game.show();
+                new RoleScreen(this.shell, game);
             });
 
             mainMenu.show();

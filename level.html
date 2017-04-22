@@ -14,10 +14,10 @@
     const STARTING_ANIM_MS = 1000;
     const GENERATE_PADDING = 200
     const SECTIONS_INDEX = [
-        //{ constr: SectionPaddles, likelyhood: 1 },
+        { constr: SectionPaddles, likelyhood: 1 },
         { constr: SectionAsteroidSingle, likelyhood: 1 },
-        //{ constr: SectionAsteroidsMulti, likelyhood: 1 },
-        //{ constr: SectionAsteroidBelt, likelyhood: 1 },
+        { constr: SectionAsteroidsMulti, likelyhood: 1 },
+        { constr: SectionAsteroidBelt, likelyhood: 1 },
     ]
 
     class Level {
@@ -28,6 +28,7 @@
                 x: this.scene.width / 2,
                 y: this.scene.height
             });
+            this.score = 0;
             let rect = this.player.getRect();
             this.player.move(0, rect.height);
             this.playerLimit = this.scene.height - 200;
@@ -110,17 +111,23 @@
         }
 
         update (dt) {
-            let collisions,
+            // Slow down if the player has been hit
+            let d = (this.player.hitDelay ? 0.2 : 0.4) * dt,
+                collisions,
                 now = Date.now(),
                 totalSectionHeight,
                 lastSection,
                 firstSection,
                 since;
+
             totalSectionHeight = this.sections.reduce((acc, section) => {
                 return acc + section.height;
             }, 0);
+
             firstSection = this.sections[0];
             lastSection = this.sections[this.sections.length - 1];
+
+            if (!this.frozen) { this.score += d / 200; }
 
             if (!this.sections.length || totalSectionHeight < this.scene.height) {
                 let { height, y } = lastSection || {}
@@ -147,8 +154,6 @@
             Logger.log("Player y: " + this.player.y);
             Logger.log("Player limit: " + this.playerLimit);
 
-            // Slow down if the player has been hit
-            let d = (this.player.hitDelay ? 0.2 : 0.4) * dt;
             this.offset += d;
 
             if (!this.frozen) {
