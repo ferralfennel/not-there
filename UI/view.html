@@ -1,0 +1,16 @@
+<script>
+    class View {
+        constructor (templateId) {
+            this.shell = document.getElementById('shell');
+            this.templateId = templateId;
+        }
+        show () {
+            this.template = document.getElementById(this.templateId);
+            this.root = this.template.content.cloneNode(true);
+            while (this.shell.firstChild) {
+                this.shell.removeChild(this.shell.firstChild);
+            }
+            this.shell.appendChild(this.root);
+        }
+    }
+</script>

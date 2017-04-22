@@ -1,0 +1,120 @@
+<link rel="import" href="./view.html">
+<script>
+    class MainMenu extends View {
+        constructor () {
+            super('main-menu');
+            Sound.load('ui', '/assets/sounds/ui.wav');
+            Sound.load('validate', '/assets/sounds/validate.wav');
+        }
+
+        show () {
+            if (location.search.indexOf('mode=solo') !== -1) {
+                this.playSolo();
+            }
+
+            super.show();
+            this.ready = {};
+            this.els = {
+                driver: this.shell.querySelector('[data-role="menu-driver"]'),
+                assist: this.shell.querySelector('[data-role="menu-assist"]'),
+                start: this.shell.querySelector('[data-role="game-start"]'),
+                solo: this.shell.querySelector('[data-role="game-start-solo"]')
+            };
+            this.options = this.shell.querySelectorAll('.main-menu>div');
+            this.optionCallbacks = [];
+
+            for (let i = 0; i < this.options.length; i++) {
+                this.optionCallbacks.push(() => {
+                    Sound.play('ui');
+                });
+                this.options[i].addEventListener('mouseenter', this.optionCallbacks[i]);
+            };
+
+            this.els.driver.addEventListener('click', () => {
+                this.chooseRole('driver');
+            });
+            this.els.assist.addEventListener('click', () => {
+                this.chooseRole('assist');
+            });
+            this.els.start.addEventListener('click', () => {
+                Socket.ready();
+            });
+            this.els.solo.addEventListener('click', this.playSolo.bind(this));
+            this.els.driver.setAttribute('disabled', true);
+            this.els.assist.setAttribute('disabled', true);
+            this.els.start.setAttribute('disabled', true);
+            this.els.solo.setAttribute('disabled', true);
+            Socket.connect().then((data) => {
+                ['driver', 'assist'].forEach(role => {
+                    if (data.rolesTaken.indexOf(role) === -1) {
+                        this.els[role].removeAttribute('disabled');
+                    }
+                });
+                Socket.socket.on('role-choosen', (role) => {
+                    this.els[role].setAttribute('disabled', true);
+                });
+
+                Socket.socket.on('all-ready', () => {
+                    this.els.start.removeAttribute('disabled');
+                    this.els.start.innerText = 'Start';
+                });
+
+                Socket.socket.on('start', (role) => {
+                    this.start();
+                });
+            }).catch(e => {
+                this.els.solo.removeAttribute('disabled');
+            });
+            this.shell.animate({
+                opacity: [0, 1]
+            }, {
+                duration: 500,
+                easing: 'ease-out'
+            });
+        }
+
+        playSolo() {
+            Socket.isDriver = true;
+            Socket.role = 'driver';
+            document.body.className += ' role-driver';
+            // document.body.className += ' role-assist';
+            this.start(true);
+        }
+
+        chooseRole (role) {
+            document.body.className += ` role-${ role }`;
+
+            Socket.chooseRole(role).then(() => {
+                let notSelected = role === 'driver' ? 'assist' : 'driver';
+                this.els.driver.querySelector('button').setAttribute('disabled', true);
+                this.els.assist.querySelector('button').setAttribute('disabled', true);
+                this.els.driver.setAttribute('disabled', true);
+                this.els.assist.setAttribute('disabled', true);
+                this.els[role].classList.add('selected');
+                this.els[notSelected].classList.add('not-selected');
+                this.els.start.innerText = 'Waiting...';
+                this.els.solo.classList.add('blur');
+                Sound.play('validate');
+                for (let i = 0; i < this.options.length; i++) {
+                    this.options[i].removeEventListener('mouseenter', this.optionCallbacks[i]);
+                }
+            });
+        }
+
+        onStart (cb) {
+            this._onStart = cb;
+        }
+
+        start (solo = false) {
+
+            this.shell.animate({
+                opacity: [1, 0]
+            }, {
+                duration: 500,
+                easing: 'ease-out'
+            }).onfinish = () => {
+                this._onStart(solo);
+            };
+        }
+    }
+</script>

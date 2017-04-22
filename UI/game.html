@@ -1,0 +1,89 @@
+<link rel="import" href="./view.html">
+<script>
+    class Game extends View {
+        constructor (solo = false) {
+            super('game');
+            this.solo = solo;
+            this.lastTs = 0;
+
+            Socket.on('reset', this.reset.bind(this));
+        }
+
+        show () {
+            super.show();
+            this.roleScreen = new RoleScreen(this.shell, this);
+            Sound.load('game-over', '/assets/sounds/death.wav');
+            Sound.load('start', '/assets/sounds/start.wav');
+            this.canvas = this.shell.querySelector('#canvas');
+            this.gameOverOverlay = this.shell.querySelector('#game-over-overlay');
+            this.gameOverRetry = this.shell.querySelector('#game-over-overlay>#retry');
+            this.gameOverRetry.addEventListener('click', () => {
+                this.reset();
+            });
+            window.addEventListener('resize', this.resize.bind(this));
+            this.resize();
+            Mouse.grab(window);
+            this.ctx = this.canvas.getContext('2d');
+            this.level = new Level(this.ctx, { solo: this.solo });
+
+            Keyboard.grab(window);
+            Logger.setContext(this.ctx);
+
+            this.shell.animate({
+                opacity: [0, 1]
+            }, {
+                duration: 500,
+                easing: 'ease-out'
+            }).onfinish = () => {
+                this.level.start();
+                Sound.play('start');
+            };
+
+            requestAnimationFrame(this.update.bind(this));
+        }
+
+        update (ts) {
+            let dt = ts - this.lastTs;
+            this.lastTs = ts;
+            this.level.update(dt);
+            this.level.render();
+            Logger.render();
+            this.shell.dispatchEvent(new Event('update', {}));
+            if (this.level.gameOver) {
+                setTimeout(() => {
+                    this.showGameOverScreen();
+                }, 500);
+            }
+            if (!this.gameOverScreen) {
+                requestAnimationFrame(this.update.bind(this));
+            }
+        }
+
+        reset () {
+            Socket.send('reset');
+            this.lastTs = 0;
+            this.gameOverScreen = false;
+            this.roleScreen.reset();
+            this.show();
+        }
+
+        showGameOverScreen () {
+            if (!this.gameOverScreen) {
+                this.gameOverScreen = true;
+                Sound.play('game-over');
+                this.gameOverOverlay.animate({
+                    transform: ['scale(5, 5)', 'scale(1, 1)'],
+                    opacity: [0, 1]
+                }, {
+                    fill: 'forwards',
+                    duration: 2000
+                });
+            }
+        }
+
+        resize () {
+            this.canvas.width = Math.min(window.innerWidth * 2, 1500);
+            this.canvas.height = window.innerHeight * 2;
+        }
+    }
+</script>
