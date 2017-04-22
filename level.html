@@ -10,13 +10,14 @@
 <link rel="import" href="./marker.html">
 <link rel="import" href="./socket-manager.html">
 <link rel="import" href="./mouse-manager.html">
+<link rel="import" href="./inventory.html">
 <link rel="import" href="./portal.html">
 <script>
     const STARTING_ANIM_MS = 1000;
     const GENERATE_PADDING = 200
     const SECTIONS_INDEX = [
-        { constr: SectionPaddles, likelyhood: 1 },
-        { constr: SectionAsteroidSingle, likelyhood: 1 },
+        { constr: SectionPaddles, likelyhood: 4 },
+        { constr: SectionAsteroidSingle, likelyhood: 2 },
         { constr: SectionAsteroidsMulti, likelyhood: 1 },
         { constr: SectionAsteroidBelt, likelyhood: 1 },
         { constr: SectionAsteroidWall, likelyhood: 1 },
@@ -30,7 +31,8 @@
             this.scene = new Scene(ctx);
             this.player = new Player(this.scene, {
                 x: this.scene.width / 2,
-                y: this.scene.height
+                y: this.scene.height,
+                inventory: new Inventory()
             });
             this.score = 0;
             let rect = this.player.getRect();
@@ -42,6 +44,8 @@
 
             this.entryPortal = null;
             this.exitPortal = null;
+
+            this.player.inventory.add('teleport', 1);
 
             Socket.on('add-marker', (e) => {
                 this.addMarker(e.x, e.y, e.role);

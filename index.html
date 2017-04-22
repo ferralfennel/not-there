@@ -105,6 +105,22 @@
                 }
             }
 
+            class InventoryUI {
+                constructor (parent, game) {
+                    this.parent = parent;
+                    this.game = game;
+                    this.root = document.createElement('ul');
+                    this.root.className = 'inventory';
+                    this.parent.appendChild(this.root);
+                    game.level.player.inventory.on('change', () => this.render());
+                    this.render();
+                }
+
+                render () {
+                    this.root.innerHTML = this.game.level.player.inventory.render();
+                }
+            }
+
             class RoleScreen {
                 constructor (parent, game) {
                     this.parent = parent;
@@ -357,6 +373,7 @@
                 let game = new Game(solo);
                 game.show();
                 new RoleScreen(this.shell, game);
+                new InventoryUI(this.shell, game);
             });
 
             mainMenu.show();
