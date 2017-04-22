@@ -61,7 +61,7 @@
             let moving = false,
                 now = Date.now();
 
-            if (!this.dead) {
+            if (!this.dead && Socket.isDriver) {
                 if (Keyboard.isDown(37)) {
                     this.velX = Math.max(this.velX - this.accel, -2);
                     moving = true;
@@ -291,13 +291,15 @@
         toJSON () {
             return {
                 x: this.x,
-                y: this.y
+                y: this.y,
+                velX: this.velX
             };
         }
 
         updateState (json) {
             this.x = json.x;
             this.y = json.y;
+            this.velX = json.velX
         }
     }
 </script>

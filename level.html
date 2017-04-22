@@ -57,6 +57,9 @@
                     if (e.type === 'entry') {
                         this.entryPortal.destroy();
                         this.entryportal = null;
+                    } else {
+                        this.exitPortal.destroy();
+                        this.exitportal = null;
                     }
                 });
             }
@@ -121,26 +124,28 @@
             }, 0);
             firstSection = this.sections[0];
             lastSection = this.sections[this.sections.length - 1];
+            
+            if (Socket.isDriver) {
+                if (!this.sections.length || totalSectionHeight < this.scene.height) {
+                    let { height, y } = lastSection || {}
+                    let newSection = this.generateSection(y - GENERATE_PADDING, height);
+                    this.scene.addElement(newSection);
+                    this.sections.push(newSection);
+                }
 
-            if (!this.sections.length || totalSectionHeight < this.scene.height) {
-                let { height, y } = lastSection || {}
-                let newSection = this.generateSection(y - GENERATE_PADDING, height);
-                this.scene.addElement(newSection);
-                this.sections.push(newSection);
-            }
+                if (firstSection && firstSection.y - firstSection.height > this.scene.height) {
+                    this.scene.removeElement(this.sections.shift());
+                }
 
-            if (firstSection && firstSection.y - firstSection.height > this.scene.height) {
-                this.scene.removeElement(this.sections.shift());
-            }
+                if (this.started) {
+                    since = now - this.started;
 
-            if (this.started) {
-                since = now - this.started;
-
-                if (since <= STARTING_ANIM_MS) {
-                    let e = EasingFunctions.easeOutQuad(since / STARTING_ANIM_MS);
-                    this.player.moveTo(this.player.x, this.scene.height - 200 * e);
-                } else {
-                    this.started = null;
+                    if (since <= STARTING_ANIM_MS) {
+                        let e = EasingFunctions.easeOutQuad(since / STARTING_ANIM_MS);
+                        this.player.moveTo(this.player.x, this.scene.height - 200 * e);
+                    } else {
+                        this.started = null;
+                    }
                 }
             }
 
@@ -176,20 +181,20 @@
             this.scene.update(dt);
             collisions = this.scene.world.getCollisions('player');
             collisions.forEach(col => {
-                console.log('hit');
+                //console.log('hit');
                 if (col.data && col.data.collisionCallback) {
                     col.data.collisionCallback(this.player);
                 }
             });
 
-            if (this.entryPortal) {
+            if (this.entryPortal && this.exitPortal && !this.entryPortal.destroyed && !this.exitPortal.destroyed) {
                 collisions = this.scene.world.getCollisions(this.entryPortal.body.id);
                 collisions.forEach(col => {
-                console.log('hit');
-                if (col.data && col.data.collisionCallback) {
-                    col.data.collisionCallback(this.entryPortal);
-                }
-            });
+                    //console.log('hit');
+                    if (col.data && col.data.collisionCallback) {
+                        col.data.collisionCallback(this.entryPortal);
+                    }
+                });
             }
 
             if (this.player.dead) {
