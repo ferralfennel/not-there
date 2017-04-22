@@ -45,7 +45,7 @@
             this.entryPortal = null;
             this.exitPortal = null;
 
-            this.player.inventory.add('teleport', 1);
+            this.player.inventory.add('teleport', 4);
 
             Socket.on('add-marker', (e) => {
                 this.addMarker(e.x, e.y, e.role);
@@ -115,6 +115,8 @@
         }
 
         placePortal (x, y) {
+            if (!this.player.inventory.has('teleport', 1)) { return; }
+
             if (!this.entryPortal) {
                 this.entryPortal = new Portal(this.scene, { x, y, type: 'entry' });
                 this.scene.addElement(this.entryPortal);
@@ -123,6 +125,7 @@
                 this.exitPortal.setBoundPortal(this.entryPortal);
                 this.entryPortal.setBoundPortal(this.exitPortal);
                 this.scene.addElement(this.exitPortal);
+                this.player.inventory.remove('teleport', 1);
             } else {
                 this.scene.removeElement(this.entryPortal);
                 this.scene.removeElement(this.exitPortal);

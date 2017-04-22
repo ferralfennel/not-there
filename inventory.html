@@ -7,7 +7,7 @@
 
     add (id, amt = 1) {
         if (!this.items[id]) { this.items[id] = 0; }
-        this.items[id]++;
+        this.items[id] += amt;
         this.emit('change');
     }
 
@@ -18,8 +18,8 @@
     remove (id, amt = 1) {
         if (!this.has(id, amt)) { throw new Error('Not enough in inventory'); }
         this.items[id] -= amt;
-        this.emit('change');
         if (this.items[id] <= 0) { delete this.items[id]; }
+        this.emit('change');
     }
 
     render() {
@@ -27,7 +27,7 @@
         let count = this.items[id];
 
         return (
-          `<li class="item"><img src="/assets/item/${ id }@2x.png" />` +
+          `<li class="item"><img src="/assets/item/${ id }.svg" />` +
             (count ? `<span>${ count }</span>` : '') +
           '</li>'
         );
