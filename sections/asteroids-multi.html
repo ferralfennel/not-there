@@ -10,7 +10,7 @@
             this.elements = [];
 
             for (let i = 0; i < Math.random() * 7 + 1; i++) {
-                this.elements.push(new Asteroid(scene, Math.random() * scene.width, 0, Math.random() * 100 + 40));
+                this.elements.push(new Asteroid(scene, Math.random() * scene.width, 0, { size: Math.random() * 100 + 40 }));
             }
         }
     }

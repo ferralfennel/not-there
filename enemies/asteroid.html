@@ -4,15 +4,20 @@
 <script>
 const ASSETS_COUNT = 4
     class Asteroid extends Entity {
-        constructor(scene, x, y, size = 20, a = 1) {
+        constructor(scene, x, y, opts) {
             super(scene.ctx, { x, y });
+            this.opts = Object.assign({
+                size: 20,
+                rotate: true,
+                move: true
+            }, opts);
             this.a = 1;
             this.rotationDir = Math.random() > .5 ? 1 : -1;
             this.dir = Math.random() > .5 ? 1 : -1;
             this.rotationSpeed = Math.random() / 500 * this.rotationDir;
-            this.speed = Math.random() / 5 * this.dir
+            this.speed = Math.random() / 5 * this.dir;
             this.assetIndex = Math.floor(Math.random() * (ASSETS_COUNT - 1)) + 1;
-            this.size = size;
+            this.size = this.opts.size;
             this.world = scene.world;
             this.body = this.world.add(null, {
                 type: 'circle',
@@ -37,8 +42,12 @@ const ASSETS_COUNT = 4
         }
 
         update(dt) {
-            this.a += this.rotationSpeed * dt;
-            this.move(this.speed * dt, 0);
+            if (this.opts.rotate) {
+                this.a += this.rotationSpeed * dt;
+            }
+            if (this.opts.move) {
+                this.move(this.speed * dt, 0);
+            }
         }
 
         render () {

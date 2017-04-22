@@ -55,7 +55,9 @@
 
             this.elements.forEach(el => el.render());
             super.afterRender();
-            // this.renderBodies()
+            if (Keyboard.isDown(68)) {
+                this.renderBodies();
+            }
         }
 
         renderBodies() {

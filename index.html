@@ -112,7 +112,7 @@
                     this.buttons.start.addEventListener('click', () => {
                         Socket.ready();
                     });
-                    this.buttons.solo.addEventListener('click', this.playSolo);
+                    this.buttons.solo.addEventListener('click', this.playSolo.bind(this));
                     this.buttons.driver.setAttribute('disabled', true);
                     this.buttons.assist.setAttribute('disabled', true);
                     this.buttons.start.setAttribute('disabled', true);

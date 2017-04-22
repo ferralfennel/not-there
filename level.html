@@ -4,6 +4,7 @@
 <link rel="import" href="./log.html">
 <link rel="import" href="./sections/asteroid-single.html">
 <link rel="import" href="./sections/asteroids-multi.html">
+<link rel="import" href="./sections/asteroid-belt.html">
 <link rel="import" href="./sections/paddles.html">
 <link rel="import" href="./marker.html">
 <link rel="import" href="./socket-manager.html">
@@ -15,6 +16,7 @@
         { constr: SectionPaddles, likelyhood: 1 },
         { constr: SectionAsteroidSingle, likelyhood: 1 },
         { constr: SectionAsteroidsMulti, likelyhood: 1 },
+        { constr: SectionAsteroidBelt, likelyhood: 1 },
     ]
 
     class Level {
@@ -98,8 +100,8 @@
                 }
             }
 
-            let d = 0.4 * dt;
-
+            // Slow down if the player has been hit
+            let d = (this.player.hitDelay ? 0.2 : 0.4) * dt;
             this.offset += d;
 
             if (!this.frozen) {

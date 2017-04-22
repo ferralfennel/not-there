@@ -1,0 +1,43 @@
+<link rel="import" href="../entity.html">
+<link rel="import" href="../socket-manager.html">
+<link rel="import" href="./asteroid.html">
+<link rel="import" href="../body-group.html">
+<script>
+    class AsteroidBelt extends Entity {
+        constructor(scene, x, y, density = 4) {
+            super(scene.ctx, { x, y });
+            this.density = density;
+            this.world = scene.world;
+
+            this.asteroids = [];
+
+            for (let i = 0; i < 20; i++) {
+                this.asteroids.push(new Asteroid(scene, x + Math.random() * scene.width, y + Math.random() * 100 - 50, {
+                    size: Math.random() * 50 + 10,
+                    move: false,
+                    rotate: false
+                }));
+            }
+
+            this.body = new BodyGroup(this.asteroids.map(a => a.body));
+        }
+
+        collisionCallback (other) {
+            if (other instanceof Player) {
+                other.hit(1);
+            }
+        }
+
+        update(dt) {
+            this.asteroids.forEach(a => a.update(dt));
+        }
+
+        render () {
+            if (!Socket.isDriver) { return; }
+
+            super.render();
+            this.asteroids.forEach(a => a.render());
+            super.afterRender();
+        }
+    }
+</script>

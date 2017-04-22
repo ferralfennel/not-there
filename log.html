@@ -11,6 +11,9 @@
                 this.stack.push(v);
             }
             render () {
+                if (!Keyboard.isDown(68)) {
+                    return;
+                }
                 this.ctx.save();
                 this.ctx.font = '30px Verdana';
                 this.ctx.fillStyle = 'white';

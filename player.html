@@ -25,6 +25,15 @@
                 scale: 5
             });
             this.life = 3;
+            this.xHistory = [0, 0];
+            this.tailParticles = new ParticleGenerator({
+                decay: 0.1,
+                maxSize: 3,
+                scale: 3,
+                gravity: 0.8,
+                number: 10,
+                initialVel: 0.1
+            });
         }
 
         update (dt) {
@@ -56,9 +65,21 @@
                 if (this.hitDelay && now - this.hitDelay > HIT_DELAY) {
                     this.hitDelay = null;
                 }
+                if (!this.hitDelay) {
+                    this.tailParticles.generate(dt);
+                }
+                this.tailParticles.tick(dt);
                 this.move(this.velX * dt);
             }
 
+            Logger.log(this.velX);
+
+        }
+
+        move (x, y) {
+            this.xHistory.push(x);
+            this.xHistory.shift();
+            super.move(x, y);
         }
 
         render () {
@@ -68,48 +89,76 @@
             let romboidSpacing = 14
             super.render();
 
-            this.ctx.fillStyle = '#fff';
-
-            // Main Body
-            this.ctx.beginPath();
-            this.ctx.moveTo(0, -r);
-            this.ctx.lineTo(-r / 2, -r / 2);
-            this.ctx.lineTo(-r / 2, r / 2);
-            this.ctx.lineTo(0, 0);
-            this.ctx.lineTo(r / 2, r / 2);
-            this.ctx.lineTo(r / 2, -r / 2);
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            this.ctx.fillStyle = '#79f6dd';
-
-            // Left wing
-            this.ctx.beginPath();
-            this.ctx.moveTo(-r / 2 - s, - r / 2 + s);
-            this.ctx.lineTo(-r, 0);
-            this.ctx.lineTo(-r / 2 - s, r / 2 - s);
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            // Right wing
-            this.ctx.beginPath();
-            this.ctx.moveTo(r / 2 + s, - r / 2 + s);
-            this.ctx.lineTo(r, 0);
-            this.ctx.lineTo(r / 2 + s, r / 2 - s);
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            // Romboids
-            for (let i = 0; i < 3; i++) {
-                this.romboid(0, (romboidSize * i * 2) + romboidSpacing * 2, romboidSize)
-            }
-
             if (!this.dead) {
                 if (this.hitDelay) {
                     this.ctx.globalAlpha = Math.random() < 0.5 ? 0.6 : 0.8;
                 }
                 this.ctx.fillStyle = 'white';
                 this.ctx.strokeStyle = 'white';
+                this.ctx.fillStyle = '#fff';
+
+                // Main Body
+                this.ctx.save();
+                this.ctx.scale(1 - Math.abs(this.velX) * 0.3 , 1);
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, -r);
+                this.ctx.lineTo(-r / 2, -r / 2);
+                this.ctx.lineTo(-r / 2, r / 2);
+                this.ctx.lineTo(0, 0);
+                this.ctx.lineTo(r / 2, r / 2);
+                this.ctx.lineTo(r / 2, -r / 2);
+                this.ctx.closePath();
+                this.ctx.fill();
+                this.ctx.restore();
+
+                this.ctx.fillStyle = '#79f6dd';
+
+                // Left wing
+                this.ctx.save();
+                this.ctx.translate(-this.velX * 3, 0);
+                this.ctx.beginPath();
+                this.ctx.moveTo(-r / 2 - s, - r / 2 + s);
+                this.ctx.lineTo(-r, 0);
+                this.ctx.lineTo(-r / 2 - s, r / 2 - s);
+                this.ctx.closePath();
+                this.ctx.fill();
+                this.ctx.restore();
+
+                // Right wing
+                this.ctx.save();
+                this.ctx.translate(-this.velX * 3, 0);
+                this.ctx.beginPath();
+                this.ctx.moveTo(r / 2 + s, - r / 2 + s);
+                this.ctx.lineTo(r, 0);
+                this.ctx.lineTo(r / 2 + s, r / 2 - s);
+                this.ctx.closePath();
+                this.ctx.fill();
+                this.ctx.restore();
+
+                // Tail particles
+                this.tailParticles.particles.forEach(p => {
+                    this.ctx.save();
+                    this.ctx.fillStyle = '#79f6dd';
+                    this.ctx.translate(p.x, p.y + 30);
+                    this.ctx.scale(p.scale, p.scale);
+                    this.ctx.rotate(45 * Math.PI / 180);
+                    this.ctx.fillRect(0, 0, 5, 5);
+                    this.ctx.restore();
+                });
+
+                // Romboids
+                for (let i = 0; i < 3; i++) {
+                    let scale = 1 - (i * 0.1);
+                    this.ctx.save();
+                    if (i !== 0) {
+                        let index = i - 1;
+                        this.ctx.translate(this.xHistory[index] * index * -0.7, 0);
+                    }
+                    this.ctx.scale(scale, scale);
+                    this.ctx.globalAlpha = scale * 1.2;
+                    this.romboid(0, (romboidSize * i * 2) + romboidSpacing * 2, romboidSize * scale)
+                    this.ctx.restore();
+                }
                 // Shield
                 if (this.life === 3) {
                     this.ctx.fillStyle = 'rgba(255, 255, 255, .05)';
@@ -132,6 +181,7 @@
                     this.ctx.fillStyle = 'white';
                     this.ctx.translate(p.x, p.y);
                     this.ctx.scale(p.scale, p.scale);
+                    this.ctx.rotate(45 * Math.PI / 180);
                     this.ctx.fillRect(0, 0, 10, 10);
                     this.ctx.restore();
                 });

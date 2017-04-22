@@ -5,7 +5,7 @@
         constructor(scene, opts) {
             super(scene, opts, 500);
             this.elements = [
-                new Asteroid(scene, Math.random() * scene.width, 0, Math.random() * 150 + 20)
+                new Asteroid(scene, Math.random() * scene.width, 0, { size: Math.random() * 150 + 20 })
             ];
         }
     }

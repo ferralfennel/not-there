@@ -10,8 +10,10 @@
             this.x += x;
             this.y += y;
             this.elements.forEach(el => {
-              el.body.x += x
-              el.body.y += y
+                if (el.body) {
+                    el.body.x += x;
+                    el.body.y += y;
+                }
             })
         }
 

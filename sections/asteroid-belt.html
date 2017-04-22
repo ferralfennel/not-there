@@ -1,0 +1,12 @@
+<link rel="import" href="./section.html">
+<link rel="import" href="../enemies/asteroid-belt.html">
+<script>
+    class SectionAsteroidBelt extends Section {
+        constructor(scene, opts) {
+            super(scene, opts, 500);
+            this.elements = [
+                new AsteroidBelt(scene, 0, 0)
+            ];
+        }
+    }
+</script>
