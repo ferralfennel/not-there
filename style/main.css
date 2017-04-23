@@ -58,37 +58,6 @@ body.role-assist .role-screen {
     left: 0;
 }
 
-.game-over {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    background: #48263F;
-    opacity: 0;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.game-over img {
-    width: 200px;
-    height: 200px;
-}
-
-.game-over button {
-    margin-top: 120px;
-}
-
-.game-over button,
-.game-over button::before,
-.game-over button::after {
-    background: #e6565b;
-    color: #48263F;
-}
-
 button {
     border-radius: 0px;
     height: 40px;
