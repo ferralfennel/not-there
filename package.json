@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server/index.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/paulvarache/not-there#readme",
   "dependencies": {
+    "node-static": "^0.7.9",
     "socket.io": "^1.7.3"
   }
 }

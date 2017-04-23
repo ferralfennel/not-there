@@ -1,5 +1,11 @@
 var http = require('http');
-let server = http.createServer(() => {});
+var static = require('node-static');
+var file = new static.Server('./', { indexFile: 'index.html' });
+let server = http.createServer((request, response) => {
+    request.addListener('end', () => {
+        file.serve(request, response);
+    }).resume();
+});
 
 var io = require('socket.io')(server);
 
