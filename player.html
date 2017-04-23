@@ -6,12 +6,13 @@
     const HIT_DELAY = 700;
     const LIGHT_CHANGE_SPEED = .05;
     const MIN_LIGHT = .2;
-    const TILT_SPEED = .07;
+    const TILT_SPEED = .02;
     const MAX_TILT = .3;
     const ROMBOID_BASE_SIZE = 10;
     const ROMBOID_SPACING = 8;
     const WING_SPACING = 4;
     const FIRE_COLORS = ['black', 'black', 'black', 'black', 'black', 'black', 'black', '#794f00', 'yellow'];
+    const TAIL_COLORS = ['#73f7dd', '#f8ca00', '#ea5455'];
 
     class Player extends Entity {
         constructor(scene, opts) {
@@ -284,10 +285,12 @@
 
                 // Romboids
                 for (let i = 0; i < 3; i++) {
+                    let color = TAIL_COLORS[i % TAIL_COLORS.length];
                     let multi = Math[i % 2 === 0 ? 'sin' : 'cos'](this.lt / 250)
                     let alpha = (multi + 1) / 4 + .5
 
-                    this.ctx[`${ prop }Style`] = `rgba(121, 246, 221, ${ alpha })`
+                    this.ctx[`${ prop }Style`] = color;
+                    // this.ctx[`${ prop }Style`] = `rgba(121, 246, 221, ${ alpha })`
 
                     let scale = 1 - i * .1 + multi / 10;
                     let translateX = this.xHistory[this.xHistory.length - i] * i * -1;

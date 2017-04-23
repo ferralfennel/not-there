@@ -18,7 +18,18 @@
                 driver: this.shell.querySelector('[data-role="menu-driver"]'),
                 assist: this.shell.querySelector('[data-role="menu-assist"]'),
                 start: this.shell.querySelector('[data-role="game-start"]'),
-                solo: this.shell.querySelector('[data-role="game-start-solo"]')
+                solo: this.shell.querySelector('[data-role="game-start-solo"]'),
+                logo: this.shell.querySelector('.logo-main'),
+                driverOpt: {
+                    img: this.shell.querySelector('.drive.option img'),
+                    title: this.shell.querySelector('.drive.option h1'),
+                    button: this.shell.querySelector('.drive.option button')
+                },
+                assistOpt: {
+                    img: this.shell.querySelector('.assist.option img'),
+                    title: this.shell.querySelector('.assist.option h1'),
+                    button: this.shell.querySelector('.assist.option button')
+                }
             };
             this.options = this.shell.querySelectorAll('.main-menu>div');
 
@@ -65,12 +76,105 @@
                 this.els.driver.classList.add('disabled');
                 this.els.assist.classList.add('disabled');
             });
-            this.shell.animate({
-                opacity: [0, 1]
+            // this.shell.animate({
+            //     opacity: [0, 1]
+            // }, {
+            //     duration: 500,
+            //     easing: 'ease-out'
+            // });
+            this.els.logo.animate({
+                transform: ['scale(.8)', 'scale(1.05)', 'scale(1)']
             }, {
                 duration: 500,
-                easing: 'ease-out'
-            });
+                easing: 'ease-out',
+                fill: 'both',
+                delay: 1500
+            })
+
+
+            // in driver
+
+            this.els.driverOpt.img.animate({
+                transform: ['scale(1.5)', 'scale(1)'],
+                opacity: ['0', '1']
+            }, {
+                duration: 500,
+                easing: 'ease-out',
+                fill: 'both',
+                delay: 300
+            })
+
+            this.els.driverOpt.title.animate({
+                transform: ['translateY(-30px)', 'translateY(0px)'],
+                opacity: ['0', '1']
+            }, {
+                duration: 500,
+                easing: 'ease-out',
+                fill: 'both',
+                delay: 800
+            })
+
+            this.els.driverOpt.button.animate({
+                transform: ['translateY(30px)', 'translateY(0px)'],
+                opacity: ['0', '1']
+            }, {
+                duration: 500,
+                easing: 'ease-out',
+                fill: 'both',
+                delay: 1000
+            })
+
+            // in assist
+
+            this.els.assistOpt.img.animate({
+                transform: ['scale(1.5)', 'scale(1)'],
+                opacity: ['0', '1']
+            }, {
+                duration: 500,
+                easing: 'ease-out',
+                fill: 'both',
+                delay: 300 + 300
+            })
+
+            this.els.assistOpt.title.animate({
+                transform: ['translateY(-30px)', 'translateY(0px)'],
+                opacity: ['0', '1']
+            }, {
+                duration: 500,
+                easing: 'ease-out',
+                fill: 'both',
+                delay: 800 + 300
+            })
+
+            this.els.assistOpt.button.animate({
+                transform: ['translateY(30px)', 'translateY(0px)'],
+                opacity: ['0', '1']
+            }, {
+                duration: 500,
+                easing: 'ease-out',
+                fill: 'both',
+                delay: 1000 + 300
+            })
+
+            this.els.solo.animate({
+                transform: ['translateY(-30px)', 'translateY(0px)'],
+                opacity: ['0', '1']
+            }, {
+                duration: 300,
+                easing: 'ease-out',
+                fill: 'both',
+                delay: 1200
+            })
+
+            this.els.start.animate({
+                transform: ['translateY(30px)', 'translateY(0px)'],
+                opacity: ['0', '1']
+            }, {
+                duration: 300,
+                easing: 'ease-out',
+                fill: 'both',
+                delay: 1300
+            })
         }
 
         playSolo() {
