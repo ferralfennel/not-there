@@ -1,4 +1,6 @@
 <link rel="import" href="./view.html">
+<link rel="import" href="./role-screen.html">
+<link rel="import" href="./inventory-ui.html">
 <script>
     class Game extends View {
         constructor (solo = false) {
@@ -11,22 +13,23 @@
 
         show () {
             super.show();
+            Mouse.grab(window);
+            Keyboard.grab(window);
+            this.canvas = this.shell.querySelector('#canvas');
+            this.resize();
+            this.ctx = this.canvas.getContext('2d');
+            this.level = new Level(this.ctx, { solo: this.solo });
             this.roleScreen = new RoleScreen(this.shell, this);
+            this.intentory = new InventoryUI(this.shell, this);
             Sound.load('game-over', '/assets/sounds/death.wav');
             Sound.load('start', '/assets/sounds/start.wav');
-            this.canvas = this.shell.querySelector('#canvas');
             this.gameOverOverlay = this.shell.querySelector('#game-over-overlay');
             this.gameOverRetry = this.shell.querySelector('#game-over-overlay>#retry');
             this.gameOverRetry.addEventListener('click', () => {
                 this.reset();
             });
             window.addEventListener('resize', this.resize.bind(this));
-            this.resize();
-            Mouse.grab(window);
-            this.ctx = this.canvas.getContext('2d');
-            this.level = new Level(this.ctx, { solo: this.solo });
 
-            Keyboard.grab(window);
             Logger.setContext(this.ctx);
 
             this.shell.animate({

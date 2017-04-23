@@ -4,7 +4,7 @@
     cursor: pointer;
 }
 
-.main-menu>div {
+.main-menu>.option {
     color: white;
     flex: 1;
     display: flex;
@@ -14,10 +14,14 @@
     transition: transform 200ms linear;
 }
 
+.main-menu>.option.selected,
+.option[disabled] {
+    pointer-events: none;
+}
+
 .main-menu img {
     width: 200px;
     height: 200px;
-    transition: transform .2s, margin .2s;
 }
 
 .main-menu h1 {
@@ -25,46 +29,70 @@
     margin-bottom: 15px;
 }
 
-.main-menu>div button {
+.main-menu>.option button {
     font-weight: 100;
     margin-top: 15px;
 }
 
-.main-menu>div:hover img,
-.main-menu>div.selected img{
-    transform: scale(1.2);
-    margin: 30px auto;
-}
-.main-menu>div.not-selected{
-    transform: translateX(50%);
-    pointer-events: none;
-    filter: grayscale() blur(3px);
-}
-.blur {
-    filter: blur(3px);
-}
-.main-menu>div.selected {
-    transform: scale(1.5);
-}
-
-.main-menu .assist {
-    background: #492540;
-}
-
-.main-menu .assist button {
-    background: #FFC952;
-}
-
-.main-menu button[disabled] {
-    opacity: 1;
-    color: rgba(255, 255, 255, .3);
-    background: #1a1521;
+.main-menu [data-role="game-start-solo"][disabled] {
+    opacity: 0.4;
 }
 
 .main-menu .alt-buttons {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translateX(-50%);
-    /*margin-top: 200px;*/
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    width: 240px;
+    left: calc(50vw - 120px);
+    justify-content: space-around;
+    align-items: center;
+}
+.main-menu .alt-buttons img {
+    width: 240px;
+    height: 240px;
+}
+
+.main-menu [data-role="game-start-solo"],
+.main-menu [data-role="game-start-solo"]::before,
+.main-menu [data-role="game-start-solo"]::after {
+    background: #E85659;
+}
+
+.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.assist button {
+    background-image: url('/assets/icon/arrow-right.svg');
+    background-size: 40px 40px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 80px;
+    min-width: 80px;
+}
+
+.drive button {
+    background-image: url('/assets/icon/arrow-left.svg');
+    background-size: 40px 40px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 80px;
+    min-width: 80px;
+}
+
+.assist.selected button,
+.assist.selected button::before,
+.assist.selected button::after {
+    background-color: #FEC85D;
+    background-image: url('/assets/icon/tick.svg');
+}
+
+.drive.selected button,
+.drive.selected button::before,
+.drive.selected button::after {
+    background-color: #79F7DD;
+    background-image: url('/assets/icon/tick.svg');
 }

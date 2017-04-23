@@ -18,23 +18,31 @@
         <link rel="import" href="./mouse-manager.html">
         <link rel="import" href="./UI/main-menu.html">
         <link rel="import" href="./UI/game.html">
+        <link rel="import" href="./UI/splash.html">
+        <link rel="import" href="./UI/role-screen.html">
     </head>
     <body>
+        <template id="splash">
+            <div class="splash start">
+                <img src="/assets/logo/intro.svg" alt="">
+            </div>
+        </template>
         <template id="main-menu">
-            <div class="main-menu">
-                <div class="drive" data-role="menu-driver">
+            <div class="main-menu start">
+                <div class="drive option" data-role="menu-driver">
                     <h1>Pilot</h1>
                     <img src="/assets/avatar/driver.svg" alt="">
-                    <button type="button">Drive</button>
+                    <button type="button"></button>
                 </div>
-                <div class="assist" data-role="menu-assist">
+                <div class="assist option" data-role="menu-assist">
                     <h1>Navigator</h1>
                     <img src="/assets/avatar/assist.svg" alt="">
-                    <button type="button">Assist</button>
+                    <button type="button"></button>
                 </div>
                 <div class="alt-buttons">
-                    <button type="button" data-role="game-start-solo">Solo Mode</button>
-                    <button type="button" data-role="game-start">Start</button>
+                    <button type="button" data-role="game-start-solo">Play Solo</button>
+                    <img src="/assets/logo/intro.svg" alt="">
+                    <button type="button" data-role="game-start">Waiting</button>
                 </div>
             </div>
         </template>
@@ -91,73 +99,21 @@
                 easeInOutQuint: function (t) { return t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t }
             };
 
-            class InventoryUI {
-                constructor (parent, game) {
-                    this.parent = parent;
-                    this.game = game;
-                    this.root = document.createElement('ul');
-                    this.root.className = 'inventory';
-                    this.parent.appendChild(this.root);
-                    game.level.player.inventory.on('change', () => this.render());
-                    this.render();
-                }
+            let splash = new Splash();
 
-                render () {
-                    this.root.innerHTML = this.game.level.player.inventory.render();
-                }
-            }
+            splash.shell.addEventListener('splash-end', () => {
+                let mainMenu = new MainMenu();
 
-            class RoleScreen {
-                constructor (parent, game) {
-                    this.parent = parent;
-                    this.game = game;
-                    this.template = document.getElementById('role-screen');
-                    this.root = this.template.content.cloneNode(true);
-                    this.parent.appendChild(this.root);
-                    shell.addEventListener('update', this.updateScore.bind(this));
-                }
+                mainMenu.onStart(solo => {
+                    let game = new Game(solo);
+                    game.show();
+                });
 
-                reset () {
-                    this.score = 0;
-                }
-
-                updateScore() {
-                    let score = String(Math.floor(this.game.level.score));
-
-                    while (score.length < 2) { score = `0${ score }`; }
-
-                    if (score !== this.score) {
-                        for (let el of document.querySelectorAll('[data-role="score"]')) {
-                            el.innerHTML = score;
-                            el.animate([{
-                                transform: 'scale(1, 1)',
-                                offset: 0
-                            }, {
-                                transform: 'scale(1.5, 1.5)',
-                                offset: 0.2
-                            }, {
-                                transform: 'scale(1, 1)',
-                                offset: 1
-                            }], {
-                                duration: 200
-                            });
-                        }
-                    }
-
-                    this.score = score;
-                }
-            }
-
-            let mainMenu = new MainMenu();
-
-            mainMenu.onStart(solo => {
-                let game = new Game(solo);
-                game.show();
-                new RoleScreen(this.shell, game);
-                new InventoryUI(this.shell, game);
+                mainMenu.show();
             });
 
-            mainMenu.show();
+            splash.show();
+
         </script>
     </body>
 </html>

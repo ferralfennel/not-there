@@ -21,37 +21,18 @@
                 solo: this.shell.querySelector('[data-role="game-start-solo"]')
             };
             this.options = this.shell.querySelectorAll('.main-menu>div');
-            this.optionCallbacks = [];
 
-            for (let i = 0; i < this.options.length; i++) {
-                this.optionCallbacks.push(() => {
-                    Sound.play('ui');
-                });
-                this.options[i].addEventListener('mouseenter', this.optionCallbacks[i]);
-            };
-
-            this.els.driver.addEventListener('click', () => {
-                this.chooseRole('driver');
-            });
-            this.els.assist.addEventListener('click', () => {
-                this.chooseRole('assist');
-            });
-            this.els.start.addEventListener('click', () => {
-                Socket.ready();
-            });
             this.els.solo.addEventListener('click', this.playSolo.bind(this));
             this.els.driver.setAttribute('disabled', true);
             this.els.assist.setAttribute('disabled', true);
             this.els.start.setAttribute('disabled', true);
             this.els.solo.setAttribute('disabled', true);
             Socket.connect().then((data) => {
-                ['driver', 'assist'].forEach(role => {
-                    if (data.rolesTaken.indexOf(role) === -1) {
-                        this.els[role].removeAttribute('disabled');
-                    }
+                data.rolesTaken.forEach(taken => {
+                    this.els[taken].classList.add('selected');
                 });
                 Socket.socket.on('role-choosen', (role) => {
-                    this.els[role].setAttribute('disabled', true);
+                    this.els[role].classList.add('selected');
                 });
 
                 Socket.socket.on('all-ready', () => {
@@ -62,8 +43,26 @@
                 Socket.socket.on('start', (role) => {
                     this.start();
                 });
+                for (let i = 0; i < this.options.length; i++) {
+                    this.optionCallbacks = [];
+                    this.optionCallbacks.push(() => {
+                        Sound.play('ui');
+                    });
+                    this.options[i].addEventListener('mouseenter', this.optionCallbacks[i]);
+                };
+                this.els.driver.addEventListener('click', () => {
+                    this.chooseRole('driver');
+                });
+                this.els.assist.addEventListener('click', () => {
+                    this.chooseRole('assist');
+                });
+                this.els.start.addEventListener('click', () => {
+                    Socket.ready();
+                });
             }).catch(e => {
                 this.els.solo.removeAttribute('disabled');
+                this.els.driver.classList.add('disabled');
+                this.els.assist.classList.add('disabled');
             });
             this.shell.animate({
                 opacity: [0, 1]
@@ -92,7 +91,7 @@
                 this.els.assist.setAttribute('disabled', true);
                 this.els[role].classList.add('selected');
                 this.els[notSelected].classList.add('not-selected');
-                this.els.start.innerText = 'Waiting...';
+                this.els.start.innerText = 'Waiting';
                 this.els.solo.classList.add('blur');
                 Sound.play('validate');
                 for (let i = 0; i < this.options.length; i++) {

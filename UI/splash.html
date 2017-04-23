@@ -1,0 +1,20 @@
+<script>
+    class Splash extends View {
+        constructor () {
+            super('splash');
+        }
+
+        show () {
+            super.show();
+            setTimeout(() => {
+                this.shell.animate({
+                    opacity: [1, 0]
+                }, {
+                    duration: 500
+                }).onfinish = () => {
+                    this.shell.dispatchEvent(new CustomEvent('splash-end'));
+                };
+            }, 2000);
+        }
+    }
+</script>

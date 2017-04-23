@@ -1,0 +1,17 @@
+<script>
+    class InventoryUI {
+        constructor (parent, game) {
+            this.parent = parent;
+            this.game = game;
+            this.root = document.createElement('ul');
+            this.root.className = 'inventory';
+            this.parent.appendChild(this.root);
+            this.game.level.player.inventory.on('change', () => this.render());
+            this.render();
+        }
+
+        render () {
+            this.root.innerHTML = this.game.level.player.inventory.render();
+        }
+    }
+</script>
