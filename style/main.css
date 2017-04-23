@@ -115,6 +115,26 @@ button::after {
     background-image: linear-gradient(#492540, #34314c);
 }
 
+@keyframes stars {
+    from {
+        background-position: 0px 0px;
+    }
+
+    to {
+        background-position: -400px -400px;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 .start:after {
     content: '';
     position: absolute;
@@ -123,8 +143,13 @@ button::after {
     right: 0;
     left: 0;
     background-image: url('/assets/misc/stars.svg');
-    background-size: 200px 200px;
+    background-size: 400px 400px;
+    animation: fade-in 2s, stars 10s infinite linear;
     pointer-events: none;
+}
+
+.splash.start:after {
+    display: none;
 }
 
 #shell {
