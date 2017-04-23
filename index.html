@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="/style/role-screen.css">
         <link rel="stylesheet" href="/style/main-menu.css">
         <link rel="stylesheet" href="/style/inventory.css">
+        <link rel="stylesheet" href="/style/game-over.css">
         <link rel="import" href="./util/chance.html">
         <link rel="import" href="./level.html">
         <link rel="import" href="./keyboard.html">
@@ -49,7 +50,8 @@
         <template id="game">
             <canvas id="canvas"></canvas>
             <div class="game-over" id="game-over-overlay">
-                <img src="/assets/logo/death.svg" alt="">
+                <img class="skull" src="/assets/logo/skull.svg">
+                <img class="logotype" src="/assets/logo/not-there.svg">
                 <button id="retry">Retry</button>
             </div>
         </template>

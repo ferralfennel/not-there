@@ -26,7 +26,7 @@
             this.els.driver.querySelector('button').setAttribute('disabled', true);
             this.els.assist.querySelector('button').setAttribute('disabled', true);
             this.els.start.setAttribute('disabled', true);
-            this.els.solo.setAttribute('disabled', true);
+
             Socket.connect().then((data) => {
                 data.rolesTaken.forEach(taken => {
                     this.els[taken].classList.add('selected');
