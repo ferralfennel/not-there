@@ -72,10 +72,12 @@
 
                 Sound.play('collect-good');
 
-                if (this.itemId === 'shield') {
-                  other.life = 3;
-                } else {
-                  other.inventory.add(this.itemId);
+                if (Socket.isDriver) {
+                    if (this.itemId === 'shield') {
+                      other.life = 3;
+                    } else {
+                      other.inventory.add(this.itemId);
+                    }
                 }
             }
         }

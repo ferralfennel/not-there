@@ -23,14 +23,14 @@
     const GENERATE_PADDING = 200
     const SECTION_REMOVE_MARGIN = 200;
     const SECTIONS_INDEX = [
-        // { constr: SectionAsteroidSingle, likelihood: 2 },
-        // { constr: SectionAsteroidsMulti, likelihood: 1 },
-        // { constr: SectionAsteroidBelt, likelihood: 1 },
-        // { constr: SectionAsteroidWall, likelihood: 1 },
+        { constr: SectionAsteroidSingle, likelihood: 2 },
+        { constr: SectionAsteroidsMulti, likelihood: 1 },
+        { constr: SectionAsteroidBelt, likelihood: 1 },
+        { constr: SectionAsteroidWall, likelihood: 1 },
         { constr: SectionCollectable, likelihood: 4 },
-        // { constr: SectionDeathBall, likelihood: 6 },
-        // { constr: SectionPaddles, likelihood: 4 },
-        // { constr: SectionEnemy, likelihood: 3 }
+        { constr: SectionDeathBall, likelihood: 6 },
+        { constr: SectionPaddles, likelihood: 4 },
+        { constr: SectionEnemy, likelihood: 3 }
     ]
 
     class Level {
@@ -182,7 +182,7 @@
 
             firstSection = this.sections[0];
             lastSection = this.sections[this.sections.length - 1];
-            
+
             if (Socket.isDriver) {
                 if (this.playerReady && (!this.sections.length || totalSectionHeight < this.scene.height * 2)) {
                     let { height, y } = lastSection || {}
@@ -246,24 +246,22 @@
             }
             this.scene.update(dt);
 
-            if (Socket.isDriver) {
-                collisions = this.scene.world.getCollisions('player');
+            collisions = this.scene.world.getCollisions('player');
+            collisions.forEach(col => {
+                //console.log('hit');
+                if (col.data && col.data.collisionCallback) {
+                    col.data.collisionCallback(this.player);
+                }
+            });
+
+            if (this.entryPortal && this.exitPortal && !this.entryPortal.destroyed && !this.exitPortal.destroyed) {
+                collisions = this.scene.world.getCollisions(this.entryPortal.body.id);
                 collisions.forEach(col => {
                     //console.log('hit');
                     if (col.data && col.data.collisionCallback) {
-                        col.data.collisionCallback(this.player);
+                        col.data.collisionCallback(this.entryPortal);
                     }
                 });
-
-                if (this.entryPortal && this.exitPortal && !this.entryPortal.destroyed && !this.exitPortal.destroyed) {
-                    collisions = this.scene.world.getCollisions(this.entryPortal.body.id);
-                    collisions.forEach(col => {
-                        //console.log('hit');
-                        if (col.data && col.data.collisionCallback) {
-                            col.data.collisionCallback(this.entryPortal);
-                        }
-                    });
-                }
             }
 
             if (this.player.dead) {
