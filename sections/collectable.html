@@ -1,10 +1,12 @@
 <link rel="import" href="./section.html">
 <link rel="import" href="../entities/collectable.html">
+<link rel="import" href="../entities/money.html">
 <link rel="import" href="../util/likelihood.html">
 <script>
     const ITEMS_INDEX = [
         { likelihood: 4, id: 'teleport' },
-        { likelihood: 1, id: 'shield' }
+        { likelihood: 1, id: 'shield' },
+        { likelihood: 5, id: 'boost' }
     ];
 
     class SectionCollectable extends Section {
@@ -16,6 +18,7 @@
             this.elements = [
                 new Collectable(scene, this.chance.random() * scene.width, 0, id)
             ];
+
         }
 
         static get type () {

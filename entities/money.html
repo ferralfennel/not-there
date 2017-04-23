@@ -1,0 +1,52 @@
+<link rel="import" href="../entity.html">
+<link rel="import" href="../cube.html">
+<link rel="import" href="../socket-manager.html">
+<script>
+
+    Sound.load('collect-good', '/assets/sounds/collect-good_0.wav');
+
+    class Money extends Entity {
+        constructor(scene, x, y, opts) {
+            super(scene, { x, y });
+            this.opts = Object.assign({}, opts);
+            this.seed = this.opts.seed;
+            this.chance = new Chance(this.seed);
+            this.world = scene.world;
+            this.body = this.world.add(null, {
+                type: 'circle',
+                x,
+                y,
+                a: this.a,
+                r: 50,
+                data: this
+            });
+
+            this.cube = new Cube(20);
+            this.vx = this.chance.random() * 1.6 + 0.2;
+            this.vy = this.chance.random() * 1.6 + 0.2;
+            this.vz = this.chance.random() * 1.6 + 0.2;
+        }
+
+        update () {
+            this.cube.rotateX(this.vx * Math.PI / 180);
+            this.cube.rotateY(this.vy * Math.PI / 180);
+            this.cube.rotateZ(this.vz * Math.PI / 180);
+        }
+
+        render (dt) {
+            super.render();
+            
+            this.ctx.strokeStyle = 'yellow';
+
+            this.cube.render(this.ctx);
+
+            super.afterRender();
+        }
+
+        collisionCallback (other) {
+            if (other instanceof Player) {
+                
+            }
+        }
+    }
+</script>

@@ -1,6 +1,6 @@
 <link rel="import" href="./entity.html">
 <link rel="import" href="./particle-generator.html">
-<link rel="import" href="../socket-manager.html">
+<link rel="import" href="./socket-manager.html">
 <script>
 
     const HIT_DELAY = 700;
@@ -30,6 +30,7 @@
             this.velX = 0;
             this.accel = 0.08;
             this.friction = 0.08;
+            this.frictionY = 0.001;
             this.particleGenerator = new ParticleGenerator({
                 decay: 0.1,
                 maxSize: 5,
@@ -57,12 +58,21 @@
                 }
             });
 
+            this.inventory.add('boost', 8);
+
             this.squish = 1;
 
             if (!Socket.isDriver) {
                 Socket.on('player-hit', (e) => {
                     this.hit(e.hit);
                 });
+            }
+        }
+
+        boost () {
+            if (!this.boosting && !this.slowing && this.inventory.has('boost', 1)) {
+                this.boosting = Date.now();
+                this.inventory.remove('boost', 1);
             }
         }
 
@@ -78,6 +88,9 @@
                     this.velX = Math.min(this.velX + this.accel, 2);
                     moving = true;
                 }
+                if (Keyboard.isDown(38) || Keyboard.isDown(87)) {
+                    this.boost();
+                }
             }
 
             if (!moving) {
@@ -87,6 +100,19 @@
                 if (this.velX > 0) {
                     this.velX = Math.max(this.velX - this.friction, 0);
                 }
+            }
+
+            if (this.boosting && Date.now() - this.boosting > 200) {
+                this.boosting = false;
+                this.slowing = true;
+            }
+
+            if (this.slowing) {
+                this.velY = Math.max(this.velY - this.friction / 4, 0);
+            }
+
+            if (this.boosting) {
+                this.velY = Math.max(this.velY - this.accel * 10, -2);
             }
 
             if (this.x > this.scene.width && this.velX > 0) {
@@ -105,7 +131,10 @@
                     this.smoke.generate();
                 }
                 this.smoke.tick(dt);
-                this.move(this.velX * dt);
+                this.move(this.velX * dt, this.velY * dt);
+                if (this.slowing && this.y > this.scene.height - 201) {
+                    this.slowing = false;
+                }
                 if (this.teleporting) {
                     this.squish -= 0.01 * dt;
                     if (this.squish <= 0) {

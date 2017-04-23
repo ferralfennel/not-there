@@ -58,6 +58,7 @@
                 });
                 this.els.start.addEventListener('click', () => {
                     Socket.ready();
+                    this.els.start.classList.add('selected');
                 });
             }).catch(e => {
                 this.els.solo.removeAttribute('disabled');

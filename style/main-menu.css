@@ -64,6 +64,12 @@
     background: #E85659;
 }
 
+.main-menu [data-role="game-start"].selected,
+.main-menu [data-role="game-start"].selected::before,
+.main-menu [data-role="game-start"].selected::after {
+    background: #4EB8DE;
+}
+
 .disabled {
     opacity: 0.4;
     pointer-events: none;

@@ -1,0 +1,44 @@
+<script>
+    class Point3D {
+        constructor (x, y, z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        project (fl) {
+            let scale = fl / (this.z + fl);
+            return {
+                x: this.x * scale,
+                y: this.y * scale
+            };
+        }
+
+        rotateX (theta) {
+            let sinT = Math.sin(theta),
+                cosT = Math.cos(theta),
+                z = this.z, y = this.y;
+            this.y = y * cosT - z * sinT;
+            this.z = y * sinT + z * cosT;
+            return this;
+        }
+
+        rotateY (theta) {
+            let sinT = Math.sin(theta),
+                cosT = Math.cos(theta),
+                x = this.x, z = this.z;
+            this.x = x * cosT - z * sinT;
+            this.z = z * cosT + x * sinT;
+            return this;
+        }
+
+        rotateZ (theta) {
+            let sinT = Math.sin(theta),
+                cosT = Math.cos(theta),
+                x = this.x, y = this.y;
+            this.x = x * cosT - y * sinT;
+            this.y = y * cosT + x * sinT;
+            return this;
+        }
+    }
+</script>

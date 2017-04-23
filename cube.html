@@ -1,0 +1,57 @@
+<link rel="import" href="./point-3d.html">
+<script>
+    class Cube {
+        constructor (size) {
+            this.size = size;
+            this.vertices = [
+                new Point3D(-1,1,-1),
+                new Point3D(1,1,-1),
+                new Point3D(1,-1,-1),
+                new Point3D(-1,-1,-1),
+                new Point3D(-1,1,1),
+                new Point3D(1,1,1),
+                new Point3D(1,-1,1),
+                new Point3D(-1,-1,1)
+            ];
+            this.faces = [
+                [0, 1, 2, 3],
+                [1, 5, 6, 2],
+                [5, 4, 7, 6],
+                [4, 0, 3, 7],
+                [0, 4, 5, 1],
+                [3, 2, 6, 7]
+            ];
+        }
+
+        rotateX (theta) {
+            this.vertices = this.vertices.map(vertex => vertex.rotateX(theta));
+        }
+
+        rotateY (theta) {
+            this.vertices = this.vertices.map(vertex => vertex.rotateY(theta));
+        }
+
+        rotateZ (theta) {
+            this.vertices = this.vertices.map(vertex => vertex.rotateZ(theta));
+        }
+
+        render (ctx) {
+            let points = this.vertices.map(vertex => {
+                let point = vertex.project(1000);
+                point.x *= this.size;
+                point.y *= this.size;
+                return point;
+            });
+
+            this.faces.forEach(face => {
+                ctx.beginPath();
+                ctx.moveTo(points[face[0]].x, points[face[0]].y);
+                ctx.lineTo(points[face[1]].x, points[face[1]].y);
+                ctx.lineTo(points[face[2]].x, points[face[2]].y);
+                ctx.lineTo(points[face[3]].x, points[face[3]].y);
+                ctx.closePath();
+                ctx.stroke();
+            });
+        }
+    }
+</script>
