@@ -108,7 +108,7 @@
                 let y = e.y - canvasBB.top * 2;
                 let role = Socket.isDriver ? 'driver' : 'assist';
 
-                if (!e.rightClick) {
+                if (e.rightClick) {
                     Socket.send('add-marker', { x, y, role });
                     this.addMarker(x, y, role);
                 } else {
