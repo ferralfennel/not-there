@@ -80,6 +80,11 @@ body.role-assist .role-screen {
 
 .game-over button {
     margin-top: 120px;
+}
+
+.game-over button,
+.game-over button::before,
+.game-over button::after {
     background: #e6565b;
     color: #48263F;
 }
