@@ -12,14 +12,18 @@
             this.seed = this.opts.seed;
             this.chance = new Chance(this.seed);
             this.world = scene.world;
+            this.scene = scene;
             this.body = this.world.add(null, {
                 type: 'circle',
                 x,
                 y,
                 a: this.a,
-                r: 50,
+                r: 30,
                 data: this
             });
+
+            this.scale = 1;
+            this.alpha = 1;
 
             this.cube = new Cube(20);
             this.vx = this.chance.random() * 1.6 + 0.2;
@@ -27,16 +31,34 @@
             this.vz = this.chance.random() * 1.6 + 0.2;
         }
 
-        update () {
+        update (dt) {
             this.cube.rotateX(this.vx * Math.PI / 180);
             this.cube.rotateY(this.vy * Math.PI / 180);
             this.cube.rotateZ(this.vz * Math.PI / 180);
+            if (this.animatingOut && Date.now() - this.animatingOut > 300) {
+                this.animatingOut = false;
+                this.destroy();
+            }
+
+            if (this.animatingOut) {
+                this.scale += 0.02 * dt;
+                this.alpha = Math.max(0, this.alpha - 0.007 * dt);
+            }
+        }
+
+        destroy () {
+            this.destroyed = true;
         }
 
         render (dt) {
+            if (this.destroyed) {
+                return;
+            }
             super.render();
+            this.ctx.scale(this.scale, this.scale);
+            this.ctx.globalAlpha = this.alpha;
             
-            this.ctx.strokeStyle = 'yellow';
+            this.ctx.strokeStyle = '#FFCA5D';
 
             this.cube.render(this.ctx);
 
@@ -45,7 +67,18 @@
 
         collisionCallback (other) {
             if (other instanceof Player) {
-                
+                this.scene.level.score += 3;
+                this.world.remove(this.body.id);
+                this.animateOut();
+            }
+        }
+
+        animateOut () {
+            if (!this.animatingOut) {
+                this.animatingOut = Date.now();
+                this.vx = this.chance.random() * 10 + 5;
+                this.vy = this.chance.random() * 10 + 5;
+                this.vz = this.chance.random() * 10 + 5;
             }
         }
     }

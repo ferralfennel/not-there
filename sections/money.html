@@ -1,0 +1,19 @@
+<link rel="import" href="./section.html">
+<link rel="import" href="../entities/money.html">
+<script>
+
+    class SectionMoney extends Section {
+        constructor (scene, opts) {
+            super(scene, opts, 50);
+
+            this.elements = [
+                new Money(scene, this.chance.random() * scene.width, 0)
+            ];
+
+        }
+
+        static get type () {
+            return 'money';
+        }
+    }
+</script>

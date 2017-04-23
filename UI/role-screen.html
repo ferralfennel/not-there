@@ -6,26 +6,26 @@
             this.template = document.getElementById('role-screen');
             this.root = this.template.content.cloneNode(true);
             this.parent.appendChild(this.root);
-            shell.addEventListener('update', this.updateScore.bind(this));
         }
 
         reset () {
             this.score = 0;
         }
 
-        updateScore() {
-            let score = String(Math.floor(this.game.level.score));
+        updateScore (score) {
+            score = String(Math.floor(score));
 
             while (score.length < 2) { score = `0${ score }`; }
 
             if (score !== this.score) {
                 for (let el of document.querySelectorAll('[data-role="score"]')) {
+                    let scale = 1.5 + (score - this.score) * 0.1;
                     el.innerHTML = score;
                     el.animate([{
                         transform: 'scale(1, 1)',
                         offset: 0
                     }, {
-                        transform: 'scale(1.5, 1.5)',
+                        transform: `scale(${scale}, ${scale})`,
                         offset: 0.2
                     }, {
                         transform: 'scale(1, 1)',

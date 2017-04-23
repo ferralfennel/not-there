@@ -65,6 +65,7 @@
             if (!this.gameOverScreen) {
                 requestAnimationFrame(this.update.bind(this));
             }
+            this.roleScreen.updateScore(this.level.score);
         }
 
         reset () {

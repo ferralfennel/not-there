@@ -1,0 +1,32 @@
+<link rel="import" href="./section.html">
+<link rel="import" href="../enemies/asteroid.html">
+<script>
+    class SectionCorridor extends Section {
+        constructor(scene, opts) {
+            super(scene, opts, 700);
+            this.height = this.chance.random() * 700 + 300;
+            this.opts = Object.assign({
+                width: 200,
+                density: 200,
+                position: this.chance.random() * (scene.width - 400) + 100
+            });
+            this.elements = [];
+            while (this.elements.length < this.opts.density) {
+                let x = this.chance.random() * scene.width,
+                    y = this.chance.random() * this.height;
+                if ((x < this.opts.position - this.opts.width / 2 || x > this.opts.position + this.opts.width / 2)) {
+                    this.elements.push(new Asteroid(scene, x, y, {
+                        size: this.chance.random() * 40 + 10,
+                        move: false,
+                        rotate: this.chance.random() < 0.5,
+                        seed: this.chance.random()
+                    }));
+                }
+            }
+        }
+
+        static get type() {
+            return 'corridor';
+        }
+    }
+</script>
