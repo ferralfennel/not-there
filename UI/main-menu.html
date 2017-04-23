@@ -23,8 +23,8 @@
             this.options = this.shell.querySelectorAll('.main-menu>div');
 
             this.els.solo.addEventListener('click', this.playSolo.bind(this));
-            this.els.driver.setAttribute('disabled', true);
-            this.els.assist.setAttribute('disabled', true);
+            this.els.driver.querySelector('button').setAttribute('disabled', true);
+            this.els.assist.querySelector('button').setAttribute('disabled', true);
             this.els.start.setAttribute('disabled', true);
             this.els.solo.setAttribute('disabled', true);
             Socket.connect().then((data) => {

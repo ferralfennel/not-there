@@ -29,6 +29,10 @@
     margin-bottom: 15px;
 }
 
+.main-menu>.option button[disabled] {
+  pointer-events: none;
+}
+
 .main-menu>.option button {
     font-weight: 100;
     margin-top: 15px;
