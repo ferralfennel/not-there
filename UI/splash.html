@@ -7,18 +7,31 @@
 
         show () {
             super.show();
+
+            let logo = this.shell.querySelector('img')
+
+            logo.animate({
+                transform: ['scale(2)', 'scale(.8)']
+            }, {
+                duration: 1000,
+                easing: 'ease-out',
+                fill: 'both'
+            })
+
+            this.shell.animate({
+                opacity: [0, 1]
+            }, {
+                duration: 500
+            }).onfinish = () => {
+                Sound.startBGM();
+            };
+
             Promise.all([
                 Sound.loadBGM(),
                 new Promise((resolve, reject) => setTimeout(resolve, 2000))
             ]).then(() => {
-                this.shell.animate({
-                    opacity: [1, 0]
-                }, {
-                    duration: 500
-                }).onfinish = () => {
-                    this.shell.dispatchEvent(new CustomEvent('splash-end'));
-                    Sound.startBGM();
-                };
+                this.shell.dispatchEvent(new CustomEvent('splash-end'));
+                Sound.startBGM();
             });
         }
     }
