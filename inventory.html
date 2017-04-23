@@ -22,6 +22,11 @@
         this.emit('change');
     }
 
+    setItems (items) {
+      this.items = items;
+      this.emit('change');
+    }
+
     render() {
       return Object.keys(this.items).sort().map(id => {
         let count = this.items[id];

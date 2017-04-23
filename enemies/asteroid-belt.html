@@ -46,7 +46,7 @@
         }
 
         collisionCallback (other) {
-            if (other instanceof Player) {
+            if (other instanceof Player && Socket.isDriver) {
                 other.hit(1);
             }
         }

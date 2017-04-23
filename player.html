@@ -370,14 +370,18 @@
             return {
                 x: this.x,
                 y: this.y,
-                velX: this.velX
+                velX: this.velX,
+                life: this.life
             };
         }
 
         updateState (json) {
             this.x = json.x;
             this.y = json.y;
-            this.velX = json.velX
+            this.velX = json.velX;
+            this.body.x = json.x;
+            this.body.y = json.y;
+            this.life = json.life;
         }
     }
 </script>

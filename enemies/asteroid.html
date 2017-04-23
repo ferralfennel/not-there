@@ -47,7 +47,11 @@ const ASSETS_COUNT = 4
 
         collisionCallback (other) {
             if (other instanceof Player && !other.hitDelay) {
-                other.hit(1);
+
+                if (Socket.isDriver) {
+                    other.hit(1);
+                }
+
                 this.explode();
                 this.world.remove(this.body.id);
             } else if (other instanceof Portal) {
