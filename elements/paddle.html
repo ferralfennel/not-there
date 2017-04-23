@@ -7,7 +7,7 @@
 
     class Paddle extends Entity {
         constructor(scene, x, y, width, height) {
-            super(scene.ctx, { x, y });
+            super(scene, { x, y });
             this.world = scene.world;
             this.body = this.world.add(null, {
                 type: 'rect',

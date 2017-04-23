@@ -4,7 +4,7 @@
 <script>
     class DeathBall extends Entity {
         constructor(scene, x, y, opts) {
-            super(scene.ctx, { x, y });
+            super(scene, { x, y });
             this.opts = Object.assign({
                 size: 20,
                 rotate: true,
@@ -40,6 +40,8 @@
         }
 
         update(dt) {
+            super.update(dt);
+
             if (this.opts.rotate) {
                 this.a = (this.a || 0) + this.rotationSpeed * dt;
             }

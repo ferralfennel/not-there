@@ -4,7 +4,7 @@
 <script>
     class FireCunt extends Entity {
         constructor (scene, x, y, opts) {
-            super(scene.ctx, { x, y, a: 0 });
+            super(scene, { x, y, a: 0 });
             this.opts = Object.assign({}, opts);
             this.chance = new Chance(this.opts.seed);
             this.rotationDir = this.chance.random() > .5 ? 1 : -1;
@@ -38,8 +38,11 @@
         }
 
         update (dt) {
+          super.update();
+
             let deltaRot = this.rotationSpeed * dt,
                 deltaD = 0.9 * dt;
+
             this.rotation += deltaRot;
             if (this.triggered && Date.now() - this.triggered >= this.willFireIn) {
                 this.fire();

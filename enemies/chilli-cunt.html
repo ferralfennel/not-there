@@ -4,7 +4,7 @@
 <script>
     class ChilliCunt extends Entity {
         constructor (scene, x, y, opts) {
-            super(scene.ctx, { x, y, a: 0 });
+            super(scene, { x, y, a: 0 });
             this.opts = Object.assign({}, opts);
             this.chance = new Chance(this.opts.seed);
             this.world = scene.world;
@@ -23,6 +23,8 @@
         }
 
         update (dt) {
+          super.update(dt);
+
             if (Date.now() - this.started >= this.willFireIn) {
                 this.fire();
             }

@@ -5,7 +5,7 @@
 const ASSETS_COUNT = 4
     class Asteroid extends Entity {
         constructor(scene, x, y, opts) {
-            super(scene.ctx, { x, y });
+            super(scene, { x, y });
             this.opts = Object.assign({
                 size: 20,
                 rotate: true,
@@ -65,6 +65,8 @@ const ASSETS_COUNT = 4
         }
 
         update(dt) {
+          super.update(dt);
+
             if (this.opts.rotate) {
                 this.a += this.rotationSpeed * dt;
             }

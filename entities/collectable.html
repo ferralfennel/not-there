@@ -10,7 +10,7 @@
 
     class Collectable extends Entity {
         constructor(scene, x, y, itemId) {
-            super(scene.ctx, { x, y });
+            super(scene, { x, y });
             this.itemId = itemId;
             this.world = scene.world;
             this.body = this.world.add(null, {

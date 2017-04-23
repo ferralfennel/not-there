@@ -5,7 +5,7 @@
 <script>
     class AsteroidBelt extends Entity {
         constructor(scene, x, y, opts) {
-            super(scene.ctx, { x, y });
+            super(scene, { x, y });
             this.opts = Object.assign({
                 height: 200,
                 seed: Math.random()
@@ -52,6 +52,7 @@
         }
 
         update(dt) {
+            super.update(dt);
             this.asteroids.forEach(a => a.update(dt));
         }
 

@@ -9,6 +9,7 @@
             let body;
             id = id || 'global-' + this._inc++;
             this.elements[id] = body = props;
+            body.id = id;
             this.elements[id].id = id;
             return body;
         }

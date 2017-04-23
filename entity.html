@@ -1,7 +1,8 @@
 <script>
     class Entity extends RenderedElement {
-        constructor(ctx, opts) {
-            super(ctx, opts);
+        constructor(scene, opts) {
+            super(scene.ctx, opts);
+            this.scene = scene;
         }
 
         moveTo (x = 0, y = 0) {
@@ -18,6 +19,10 @@
                 this.body.y += diff.y;
             }
 
+        }
+
+        update () {
+          super.update();
         }
 
         move (x = 0, y = 0) {

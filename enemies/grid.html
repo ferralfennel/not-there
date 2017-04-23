@@ -4,7 +4,7 @@
 
     class Grid extends Entity {
         constructor(scene, x, y, opts) {
-            super(scene.ctx, { x, y });
+            super(scene, { x, y });
             this.opts = Object.assign({ height: 20 }, opts);
             this.height = this.opts.height;
             this.scene = scene;

@@ -15,7 +15,7 @@
 
     class Player extends Entity {
         constructor(scene, opts) {
-            super(scene.ctx, opts);
+            super(scene, opts);
             scene.addElement(this);
             this.world = scene.world;
             this.inventory = opts.inventory;

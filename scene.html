@@ -28,9 +28,21 @@
 
         removeElement (el) {
             let index = this.elements.indexOf(el);
+
+            if (el.body) {
+                this.world.remove(el.body.id);
+            }
+
             if (index >= 0) {
                 el.scene = null;
+
                 this.elements.splice(index, 1);
+
+                if (el.elements) {
+                    for (let child of el.elements) {
+                        this.removeElement(child);
+                    }
+                }
             }
         }
 
@@ -60,9 +72,10 @@
 
             this.elements.forEach(el => el.render());
             super.afterRender();
-            // if (Keyboard.isDown(70)) {
+
+            if (Keyboard.isDown(70)) {
                 this.renderBodies();
-            // }
+            }
         }
 
         renderBodies() {
