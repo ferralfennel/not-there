@@ -3,10 +3,15 @@
         constructor() {
             this.ctx = new AudioContext();
             this.buffers = {};
+            this.bgmPlaying = false;
+        }
+
+        loadBGM () {
+            return this.load('bgm', '/assets/bgm/01.mp3');
         }
 
         load (id, url) {
-            fetch(url)
+            return fetch(url)
                 .then(r => r.arrayBuffer())
                 .then(ab => {
                     return this.ctx.decodeAudioData(ab);
@@ -22,6 +27,26 @@
             source.connect(this.ctx.destination);
 
             source.start(0);
+        }
+
+        startBGM () {
+            if (this.bgmPlaying) {
+                return;
+            }
+            this.bgmPlaying = true;
+            this.bgmSource = this.ctx.createBufferSource();
+            this.bgmSource.buffer = this.buffers['bgm'];
+
+            this.bgmSource.loop = true;
+
+            this.bgmSource.connect(this.ctx.destination);
+
+            this.bgmSource.start(0);
+        }
+
+        stopBGM () {
+            this.bgmSource.stop();
+            this.bgmPlaying = false;
         }
     }
 

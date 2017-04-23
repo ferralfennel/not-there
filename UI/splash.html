@@ -1,3 +1,4 @@
+<link rel="import" type="" href="../sound-manager.html">
 <script>
     class Splash extends View {
         constructor () {
@@ -6,15 +7,19 @@
 
         show () {
             super.show();
-            setTimeout(() => {
+            Promise.all([
+                Sound.loadBGM(),
+                new Promise((resolve, reject) => setTimeout(resolve, 2000))
+            ]).then(() => {
                 this.shell.animate({
                     opacity: [1, 0]
                 }, {
                     duration: 500
                 }).onfinish = () => {
                     this.shell.dispatchEvent(new CustomEvent('splash-end'));
+                    Sound.startBGM();
                 };
-            }, 2000);
+            });
         }
     }
 </script>

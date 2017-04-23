@@ -53,6 +53,7 @@
             Logger.render();
             this.shell.dispatchEvent(new Event('update', {}));
             if (this.level.gameOver) {
+                Sound.stopBGM();
                 setTimeout(() => {
                     this.showGameOverScreen();
                 }, 500);
