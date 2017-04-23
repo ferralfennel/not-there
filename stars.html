@@ -9,17 +9,19 @@
     }
 
     update (dt) {
-      while (this.stars.length < STARS_COUNT) {
-        this.addStar();
-      }
+      if (Socket.isDriver) {
+        while (this.stars.length < STARS_COUNT) {
+          this.addStar();
+        }
 
-      this.initialised = true;
+        this.initialised = true;
 
-      for (let star of this.stars) {
-        star.y += star.v * dt;
+        for (let star of this.stars) {
+          star.y += star.v * dt;
 
-        if (star.y > this.scene.height + star.r) {
-          this.stars.splice(this.stars.indexOf(star), 1);
+          if (star.y > this.scene.height + star.r) {
+            this.stars.splice(this.stars.indexOf(star), 1);
+          }
         }
       }
     }
@@ -39,13 +41,47 @@
     }
 
     render () {
-      for (let star of this.stars) {
-        this.ctx.fillStyle = `rgba(255, 255, 255, ${ star.a })`;
-        this.ctx.beginPath();
-        this.ctx.arc(star.x, star.y, star.r, 0, 2 * Math.PI);
-        this.ctx.fill();
-        this.ctx.closePath();
+      this.ctx.save();
+      if (Socket.isDriver) {
+        for (let star of this.stars) {
+          this.ctx.fillStyle = `rgba(255, 255, 255, ${ star.a })`;
+          this.ctx.beginPath();
+          this.ctx.arc(star.x, star.y, star.r, 0, 2 * Math.PI);
+          this.ctx.fill();
+          this.ctx.closePath();
+        }
+      } else {
+        let cursorX = -10,
+            cursorY = 0;
+        this.ctx.strokeStyle = '#f2f2f2';
+        this.ctx.globalAlpha = 0.4;
+        while (cursorX < this.scene.width + 10) {
+
+          this.ctx.beginPath();
+          this.ctx.setLineDash([6, 6]);
+          this.ctx.moveTo(cursorX, 0);
+          this.ctx.lineTo(cursorX, this.scene.height);
+          this.ctx.stroke();
+
+          cursorX += 120;
+        }
+
+        this.ctx.translate(0, -this.scene.height + (this.scene.offset % this.scene.height));
+
+        while (cursorY < this.scene.height * 2) {
+
+          this.ctx.beginPath();
+          this.ctx.setLineDash([3, 6]);
+          this.ctx.moveTo(0, cursorY);
+          this.ctx.lineTo(this.scene.width, cursorY);
+          this.ctx.stroke();
+
+          cursorY += 120;
+        }
+
+        Logger.log(this.scene.offset % this.scene.height);
       }
+      this.ctx.restore();
     }
   }
 </script>
