@@ -45,6 +45,7 @@
         }
 
         stopBGM () {
+            if (!this.bgmPlaying) { return; }
             this.bgmSource.stop();
             this.bgmPlaying = false;
         }

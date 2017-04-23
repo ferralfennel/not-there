@@ -21,10 +21,9 @@
             this.shell.animate({
                 opacity: [0, 1]
             }, {
-                duration: 500
-            }).onfinish = () => {
-                Sound.startBGM();
-            };
+                duration: 500,
+                easing: 'ease-out'
+            });
 
             Promise.all([
                 Sound.loadBGM(),

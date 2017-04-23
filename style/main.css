@@ -59,6 +59,7 @@ body.role-assist .role-screen {
 }
 
 button {
+    font-weight: bold;
     border-radius: 0px;
     height: 40px;
     min-width: 120px;
